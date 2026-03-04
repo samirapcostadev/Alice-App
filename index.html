@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#F7F5F2">
+    <title>Alice</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='img/favicon.svg') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" integrity="sha512-c42qTSw/wPZ3/5LBzD+Bw5f7bSF2oxou6wEb+I/lqeaKV5FDIfMvvRp772y4jcJLKuGUOpbJMdg/BTl50fJYAw==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=8">
+    <script>
+        window.ALICE_USER_FIRST = '';
+    </script>
+</head>
+<body>
+<div class="bg-blobs" aria-hidden="true"></div>
+
+<!-- ── ONBOARDING OVERLAY ─────────────────────────────── -->
+<div id="onboarding-overlay" class="onboarding-overlay hidden">
+
+    <button class="onboarding-skip-btn" id="onboarding-skip-btn" onclick="skipOnboarding()" aria-label="Pular questionário">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="20" height="20"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+
+    <div class="onboarding-header">
+        <div class="onboarding-logo-wrap">
+            <img src="/static/img/logo.png" alt="Alice">
+        </div>
+        <p class="onboarding-intro" data-i18n="onboarding_intro">Antes de começarmos, quero te conhecer um pouco.</p>
+    </div>
+
+    <div class="onboarding-chat" id="onboarding-chat">
+        <!-- Messages rendered by JS -->
+    </div>
+
+    <div id="onboarding-input-area">
+        <div class="chat-input-wrap" style="padding-top:8px">
+            <div class="chat-input-container">
+                <textarea id="onboarding-input"
+                          class="chat-textarea"
+                          placeholder="Escreva aqui…"
+                          data-i18n="onboarding_placeholder"
+                          rows="1"
+                          onkeydown="onboardingKeydown(event)"
+                          oninput="aliceInputResize(this)"></textarea>
+                <button id="btn-onboarding-send"
+                        class="chat-send-btn"
+                        onclick="sendOnboardingMessage()"
+                        aria-label="Enviar"
+                        data-i18n-aria="chat_send">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="onboarding-photo-step" class="onboarding-photo-step hidden">
+        <div class="onboarding-photo-content">
+            <h2 class="onboarding-photo-title" data-i18n="onboarding_photo_title">Vamos colocar um rosto no nome</h2>
+            <p class="onboarding-photo-subtitle" data-i18n="onboarding_photo_subtitle">Escolha uma foto que mostre quem você é de verdade</p>
+
+            <div class="onboarding-photo-placeholder" id="onboarding-photo-placeholder">
+                <div class="onboarding-photo-preview hidden" id="onboarding-photo-preview">
+                    <img id="onboarding-photo-img" alt="">
+                </div>
+                <div class="onboarding-photo-icon" id="onboarding-photo-icon">
+                    <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="6" y="10" width="36" height="28" rx="4"/>
+                        <circle cx="24" cy="24" r="8"/>
+                        <circle cx="24" cy="24" r="3"/>
+                        <path d="M14 10V8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="onboarding-photo-buttons" id="onboarding-photo-buttons">
+                <button class="onboarding-photo-btn onboarding-photo-btn--camera" onclick="onboardingTakePhoto()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="20" height="20">
+                        <rect x="3" y="5" width="18" height="14" rx="2"/>
+                        <circle cx="12" cy="12" r="4"/>
+                        <circle cx="12" cy="12" r="1.5"/>
+                        <path d="M7 5V4a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v1"/>
+                    </svg>
+                    <span data-i18n="onboarding_photo_take">Tirar Foto</span>
+                </button>
+                <button class="onboarding-photo-btn onboarding-photo-btn--gallery" onclick="onboardingPickPhoto()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="20" height="20">
+                        <rect x="3" y="3" width="18" height="18" rx="2"/>
+                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                        <path d="M21 15l-5-5L5 21"/>
+                    </svg>
+                    <span data-i18n="onboarding_photo_gallery">Escolher da Galeria</span>
+                </button>
+            </div>
+            <div class="onboarding-photo-confirm hidden" id="onboarding-photo-confirm-wrap">
+                <button class="onboarding-photo-btn onboarding-photo-btn--confirm" onclick="onboardingConfirmPhoto()">
+                    <span data-i18n="onboarding_photo_confirm">Usar esta foto</span>
+                </button>
+                <button class="onboarding-photo-btn onboarding-photo-btn--retake" onclick="onboardingRetakePhoto()">
+                    <span data-i18n="onboarding_photo_retake">Escolher outra</span>
+                </button>
+            </div>
+
+            <button class="onboarding-photo-skip" onclick="onboardingSkipPhoto()">
+                <span data-i18n="onboarding_photo_skip">Pular</span>
+            </button>
+        </div>
+    </div>
+
+    <input type="file" id="onboarding-photo-camera-input" accept="image/*" capture="user" class="sr-file-input" onchange="onboardingPhotoSelected(this)">
+    <input type="file" id="onboarding-photo-gallery-input" accept="image/*" class="sr-file-input" onchange="onboardingPhotoSelected(this)">
+
+</div><!-- /#onboarding-overlay -->
+
+
+<!-- ── HEADER ──────────────────────────────────────────── -->
+<header class="app-header">
+    <div class="header-left">
+        <div class="header-logo" id="header-logo">
+            <img src="/static/img/logo.png" alt="Alice" style="height:34px;width:auto;object-fit:contain;display:block">
+        </div>
+        <button id="btn-back"
+                class="header-btn header-btn--back hidden"
+                onclick="handleBack()"
+                title="Voltar"
+                aria-label="Voltar para temas"
+                data-i18n-title="btn_back"
+                data-i18n-aria="btn_back">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+                <polyline points="15 18 9 12 15 6"/>
+            </svg>
+        </button>
+    </div>
+
+    <h1 class="header-title" id="header-title">Alice</h1>
+
+    <div class="header-actions">
+        <button id="btn-emergency"
+                class="header-btn header-btn--sos hidden"
+                onclick="toggleEmergency()"
+                title="Modo de apoio imediato"
+                aria-label="Ativar modo de emergência"
+                data-i18n-title="emergency_btn_title"
+                data-i18n-aria="emergency_btn_title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06
+                         a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78
+                         1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+        </button>
+
+        <button id="btn-notifications" class="header-btn hidden" onclick="toggleNotifications()" title="Notificações" aria-label="Notificações">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+            <span class="notif-badge hidden" id="notif-badge">0</span>
+        </button>
+
+        <a id="btn-logout"
+           href="#"
+           onclick="logoutUser(); return false;"
+           class="header-btn hidden"
+           title="Sair"
+           aria-label="Sair da conta"
+           data-i18n-title="btn_logout"
+           data-i18n-aria="btn_logout_profile">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                <polyline points="16 17 21 12 16 7"/>
+                <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+        </a>
+    </div>
+</header>
+
+
+<!-- ── TAB CONTENTS ───────────────────────────────────── -->
+<main class="app-main">
+
+    <!-- ═══════════════════════════════════════════════
+         TAB 1 — HOME
+    ═══════════════════════════════════════════════ -->
+    <section class="tab-content active" id="tab-home">
+
+        <!-- Landing page -->
+        <div class="home-landing" id="home-landing">
+            <div class="landing-hero">
+                <img src="/static/img/logo.png" alt="Alice" class="landing-logo">
+                <p class="landing-subtitle">a sua melhor amiga</p>
+                <p class="landing-acronym">Artificial Learning with Intersectional &amp;<br>Critical Epistemology</p>
+            </div>
+
+            <div class="landing-checkin" id="checkin-widget">
+                <p class="checkin-question" data-i18n="checkin_title">Como você está hoje?</p>
+                <div class="checkin-options">
+                    <button class="checkin-btn" onclick="setCheckin('devastada')" data-mood="devastada">
+                        <span class="checkin-icon"><img src="/static/images/mood/devastada.png" alt="Devastada"></span>
+                        <span class="checkin-label" data-i18n="mood_devastada">Devastada</span>
+                    </button>
+                    <button class="checkin-btn" onclick="setCheckin('triste')" data-mood="triste">
+                        <span class="checkin-icon"><img src="/static/images/mood/triste.png" alt="Triste"></span>
+                        <span class="checkin-label" data-i18n="mood_triste">Triste</span>
+                    </button>
+                    <button class="checkin-btn" onclick="setCheckin('confusa')" data-mood="confusa">
+                        <span class="checkin-icon"><img src="/static/images/mood/confusa.png" alt="Confusa"></span>
+                        <span class="checkin-label" data-i18n="mood_confusa">Confusa</span>
+                    </button>
+                    <button class="checkin-btn" onclick="setCheckin('ok')" data-mood="ok">
+                        <span class="checkin-icon"><img src="/static/images/mood/ok.png" alt="Ok"></span>
+                        <span class="checkin-label" data-i18n="mood_ok">Ok</span>
+                    </button>
+                    <button class="checkin-btn" onclick="setCheckin('bem')" data-mood="bem">
+                        <span class="checkin-icon"><img src="/static/images/mood/bem.png" alt="Bem"></span>
+                        <span class="checkin-label" data-i18n="mood_bem">Bem</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="landing-features">
+                <button class="hero-cta" onclick="showTopicSelection()">
+                    <div class="hero-cta-accent"></div>
+                    <div class="hero-cta-content">
+                        <div class="hero-cta-icon">
+                            <svg viewBox="0 0 36 36" fill="none">
+                                <defs>
+                                    <linearGradient id="heroGrad" x1="0" y1="0" x2="36" y2="36">
+                                        <stop offset="0%" stop-color="#8B2635"/>
+                                        <stop offset="50%" stop-color="#6B3A6D"/>
+                                        <stop offset="100%" stop-color="#3A8D9F"/>
+                                    </linearGradient>
+                                    <linearGradient id="heroHeartGrad" x1="12" y1="8" x2="24" y2="22">
+                                        <stop offset="0%" stop-color="#8B2635"/>
+                                        <stop offset="100%" stop-color="#6B3A6D"/>
+                                    </linearGradient>
+                                </defs>
+                                <path d="M18 3C10.28 3 4 8 4 14.5c0 3.5 1.8 6.6 4.7 8.8L7 29l5.5-3c1.4.5 3 .8 5.5.8 7.72 0 14-5 14-12.3S25.72 3 18 3z" stroke="url(#heroGrad)" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M18 10.5c-.5-1.5-2-2.5-3.5-2.5-2 0-3.5 1.5-3.5 3.5 0 4 7 7.5 7 7.5s7-3.5 7-7.5c0-2-1.5-3.5-3.5-3.5-1.5 0-3 1-3.5 2.5z" fill="url(#heroHeartGrad)" opacity="0.85"/>
+                                <path d="M23 20c1 .5 1.5 1 2 1.8" stroke="url(#heroGrad)" stroke-width="1" stroke-linecap="round" opacity="0.3"/>
+                                <path d="M13 20c-1 .5-1.5 1-2 1.8" stroke="url(#heroGrad)" stroke-width="1" stroke-linecap="round" opacity="0.3"/>
+                            </svg>
+                        </div>
+                        <div class="hero-cta-text">
+                            <span class="hero-cta-title" data-i18n="card_alice">Conversar com Alice</span>
+                            <span class="hero-cta-sub" data-i18n="hero_sub">Sua companheira de jornada</span>
+                        </div>
+                        <svg class="hero-cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9 6 15 12 9 18"/>
+                        </svg>
+                    </div>
+                </button>
+
+                <div class="feature-grid-row">
+                    <button class="feature-card" onclick="switchTab('diretorio')">
+                        <div class="feature-icon-wrap">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                        </div>
+                        <span class="feature-label" data-i18n="card_directory">Diretório</span>
+                        <span class="feature-desc" data-i18n="card_directory_sub">Profissionais</span>
+                    </button>
+
+                    <button class="feature-card" onclick="switchTab('rede')">
+                        <div class="feature-icon-wrap">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                <path d="M12 22V12"/>
+                                <path d="M12 12C12 8 9 5 5 5c0 4 3 7 7 7z"/>
+                                <path d="M12 12C12 8 15 5 19 5c0 4-3 7-7 7z"/>
+                                <path d="M7 20c2-2 3-4 5-4s3 2 5 4"/>
+                            </svg>
+                        </div>
+                        <span class="feature-label" data-i18n="card_rede">Rede</span>
+                        <span class="feature-desc" data-i18n="card_rede_sub">Comunidade</span>
+                    </button>
+
+                    <button class="feature-card" onclick="switchTab('meuspaco')">
+                        <div class="feature-icon-wrap">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        </div>
+                        <span class="feature-label" data-i18n="card_meuspaco">Meu Espaço</span>
+                        <span class="feature-desc" data-i18n="card_meuspaco_sub">Seus dados</span>
+                    </button>
+                </div>
+
+                <button class="feature-card" onclick="openScanner()">
+                    <div class="feature-icon-wrap">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                            <circle cx="11" cy="11" r="8"/>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                            <path d="M8 11h6M11 8v6" stroke-width="1.5" opacity="0.5"/>
+                        </svg>
+                    </div>
+                    <span class="feature-label" data-i18n="card_scanner">Scanner</span>
+                    <span class="feature-desc" data-i18n="card_scanner_sub">Análise de texto</span>
+                </button>
+
+                <button class="feature-card" onclick="openDiaryView()">
+                    <div class="feature-icon-wrap">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                            <line x1="8" y1="7" x2="16" y2="7"/>
+                            <line x1="8" y1="11" x2="14" y2="11"/>
+                        </svg>
+                    </div>
+                    <span class="feature-label">Meu Diário</span>
+                    <span class="feature-desc">Seus registros pessoais</span>
+                </button>
+
+                <button class="feature-card feature-card--sos" onclick="openAlertaSeguro()">
+                    <div class="feature-icon-wrap feature-icon-wrap--sos">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                    </div>
+                    <span class="feature-label">Alerta Seguro</span>
+                    <span class="feature-desc">Localização com contatas</span>
+                </button>
+            </div>
+
+            <div class="pilula-card" id="pilula-card">
+                <div class="pilula-header">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="pilula-header-icon">
+                        <path d="M9 18V5l12-2v13"/>
+                        <circle cx="6" cy="18" r="3"/>
+                        <circle cx="18" cy="16" r="3"/>
+                    </svg>
+                    <span class="pilula-title" data-i18n="pilula_title">Pílula de Acolhimento</span>
+                </div>
+                <p class="pilula-text" id="pilula-text" data-i18n="pilula_loading">Carregando…</p>
+                <p class="pilula-author" id="pilula-author"></p>
+                <p class="pilula-source" id="pilula-source"></p>
+                <div class="pilula-controls">
+                    <button class="pilula-play-btn" id="pilula-play-btn" onclick="playPilulaAudio()">
+                        <svg viewBox="0 0 24 24" fill="currentColor" class="pilula-play-icon" id="pilula-play-icon">
+                            <polygon points="5 3 19 12 5 21 5 3"/>
+                        </svg>
+                    </button>
+                    <div class="pilula-progress-wrap" id="pilula-progress-wrap" style="display:none">
+                        <div class="pilula-waveform">
+                            <span class="wave-bar"></span>
+                            <span class="wave-bar"></span>
+                            <span class="wave-bar"></span>
+                            <span class="wave-bar"></span>
+                            <span class="wave-bar"></span>
+                        </div>
+                        <div class="pilula-progress-bar">
+                            <div class="pilula-progress-fill" id="pilula-progress-fill"></div>
+                        </div>
+                    </div>
+                    <button class="pilula-shuffle-btn" onclick="shufflePilula()" title="Outra pílula" data-i18n-title="pilula_shuffle">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="16 3 21 3 21 8"/>
+                            <line x1="4" y1="20" x2="21" y2="3"/>
+                            <polyline points="21 16 21 21 16 21"/>
+                            <line x1="15" y1="15" x2="21" y2="21"/>
+                            <line x1="4" y1="4" x2="9" y2="9"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="vip-consultora-card" class="vip-consultora-card hidden" onclick="useVipToken()">
+            <div class="vip-card-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#8B7520" stroke-width="1.8" width="20" height="20">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+                <h4 class="vip-card-title">Agendar Consultora</h4>
+            </div>
+            <p class="vip-card-subtitle">Sessão com advogada ou mentora de carreira da nossa rede</p>
+            <span class="vip-token-badge">1 sessão disponível</span>
+        </div>
+
+        <!-- Topic selection (shown after clicking "Conversar com Alice") -->
+        <div class="home-welcome hidden" id="home-welcome">
+            <div class="starters-section" id="starters-section">
+                <p class="starters-title" data-i18n="topic_title">Sobre o que quer conversar?</p>
+                <div class="starters-grid">
+                    <button class="starter-card" onclick="selectTopic('desabafo')">
+                        <span class="starter-icon">
+                            <img src="/static/images/topics/desabafo.png" alt="Desabafo">
+                        </span>
+                        <span class="starter-label" data-i18n="topic_desabafo">Preciso desabafar</span>
+                        <span class="starter-badge" id="badge-desabafo" style="display:none" data-i18n="badge_continue">continuar</span>
+                    </button>
+                    <button class="starter-card" onclick="selectTopic('amor')">
+                        <span class="starter-icon">
+                            <img src="/static/images/topics/amor.png" alt="Amor">
+                        </span>
+                        <span class="starter-label" data-i18n="topic_amor">Amor e vínculos</span>
+                        <span class="starter-badge" id="badge-amor" style="display:none" data-i18n="badge_continue">continuar</span>
+                    </button>
+                    <button class="starter-card" onclick="selectTopic('trabalho')">
+                        <span class="starter-icon">
+                            <img src="/static/images/topics/trabalho.png" alt="Trabalho">
+                        </span>
+                        <span class="starter-label" data-i18n="topic_trabalho">Trabalho e carreira</span>
+                        <span class="starter-badge" id="badge-trabalho" style="display:none" data-i18n="badge_continue">continuar</span>
+                    </button>
+                    <button class="starter-card" onclick="selectTopic('familia')">
+                        <span class="starter-icon">
+                            <img src="/static/images/topics/familia.png" alt="Família">
+                        </span>
+                        <span class="starter-label" data-i18n="topic_familia">Família e maternidade</span>
+                        <span class="starter-badge" id="badge-familia" style="display:none" data-i18n="badge_continue">continuar</span>
+                    </button>
+                    <button class="starter-card" onclick="selectTopic('conversa')">
+                        <span class="starter-icon">
+                            <img src="/static/images/topics/conversa.png" alt="Conversa">
+                        </span>
+                        <span class="starter-label" data-i18n="topic_conversa">Conversa livre</span>
+                        <span class="starter-badge" id="badge-conversa" style="display:none" data-i18n="badge_continue">continuar</span>
+                    </button>
+                    <button class="starter-card" onclick="selectTopic('direitos')">
+                        <span class="starter-icon">
+                            <img src="/static/images/topics/direitos.png" alt="Direitos">
+                        </span>
+                        <span class="starter-label" data-i18n="topic_direitos">Direitos e apoio</span>
+                        <span class="starter-badge" id="badge-direitos" style="display:none" data-i18n="badge_continue">continuar</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scanner de Discurso view -->
+        <div class="scanner-view hidden" id="scanner-view">
+            <p class="scanner-title" data-i18n="scanner_title">Scanner de Discurso</p>
+            <p class="scanner-desc" data-i18n="scanner_desc">Cole um texto (mensagem, conversa, trecho) e a Alice identifica padrões de gaslighting, machismo e violência simbólica.</p>
+            <div class="scanner-input-area">
+                <textarea class="scanner-textarea" id="scanner-textarea" placeholder="Cole aqui o texto que quer analisar…" maxlength="3000" oninput="updateScannerCount()" data-i18n="scanner_placeholder"></textarea>
+                <div class="scanner-count"><span id="scanner-char-count">0</span>/3000</div>
+            </div>
+            <div class="scanner-attach-row">
+                <input type="file" id="scanner-file-input" class="sr-file-input" accept="image/jpeg,image/png,image/gif,image/webp,.pdf,.txt" multiple onchange="handleScannerFileSelect(this)">
+                <label for="scanner-file-input" class="scanner-attach-btn" role="button" tabindex="0" title="Anexar arquivo" data-i18n-title="chat_attach">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px">
+                        <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                    </svg>
+                    <span data-i18n="scanner_or_upload">Ou anexe uma imagem / arquivo</span>
+                </label>
+            </div>
+            <div class="scanner-attach-preview hidden" id="scanner-attach-preview"></div>
+            <button type="button" class="btn-scanner-submit" id="btn-scanner-submit" onclick="submitScanner()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;margin-right:6px">
+                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <span data-i18n="scanner_analyze">Analisar</span>
+            </button>
+            <div class="scanner-result hidden" id="scanner-result">
+                <div class="scanner-result-content" id="scanner-result-content"></div>
+            </div>
+            <div class="scanner-loading hidden" id="scanner-loading">
+                <div class="scanner-spinner"></div>
+                <span data-i18n="scanner_loading">Alice está analisando…</span>
+            </div>
+        </div>
+
+        <!-- Chat area -->
+        <div class="alice-chat-list hidden" id="alice-chat-list"></div>
+
+        <!-- Chat top bar (fullscreen mode) -->
+        <div class="chat-topbar hidden" id="chat-topbar">
+            <div class="chat-topbar-left">
+                <span class="chat-topbar-topic" id="chat-topbar-topic"></span>
+                <button class="btn-encerrar" id="btn-encerrar" onclick="encerrarConversa()" data-i18n="btn_end_topic">Encerrar conversa</button>
+            </div>
+            <button class="chat-topbar-close" id="chat-topbar-close" onclick="closeChatView()" aria-label="Fechar chat" data-i18n-aria="btn_close_chat">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="width:20px;height:20px">
+                    <path d="M18 6L6 18M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Chat input — messenger style -->
+        <div class="chat-input-wrap hidden" id="alice-input-bar">
+            <div class="chat-input-extras">
+                <button class="whisper-toggle" id="whisper-toggle" onclick="toggleWhisperMode()" title="Modo sussurro" data-i18n-title="voice_whisper_mode">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="whisper-icon">
+                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                        <line x1="12" y1="19" x2="12" y2="23"/>
+                        <line x1="8" y1="23" x2="16" y2="23"/>
+                    </svg>
+                    <span class="whisper-label" data-i18n="whisper">Sussurro</span>
+                </button>
+            </div>
+            <div class="chat-attach-preview hidden" id="chat-attach-preview"></div>
+            <div class="chat-input-container">
+                <input type="file" id="chat-file-input" class="sr-file-input" accept="image/jpeg,image/png,image/gif,image/webp,.pdf,.txt" multiple onchange="handleFileSelect(this)">
+                <label for="chat-file-input" class="chat-attach-btn" title="Anexar arquivo" data-i18n-title="chat_attach" role="button" tabindex="0">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                    </svg>
+                </label>
+                <textarea id="alice-input"
+                          class="chat-textarea"
+                          placeholder="Escreva sua mensagem…"
+                          data-i18n="chat_placeholder"
+                          rows="1"
+                          onkeydown="aliceInputKeydown(event)"
+                          oninput="aliceInputResize(this)"></textarea>
+                <button id="btn-alice-send"
+                        class="chat-send-btn"
+                        onclick="sendAliceMessage()"
+                        aria-label="Enviar mensagem"
+                        data-i18n-aria="chat_send">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                        <path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <small class="chat-disclaimer">A ALICE é uma IA de apoio baseada em curadoria ética, mas pode cometer erros. Não substitui aconselhamento médico, jurídico ou psicológico. Em emergências, ligue 112 (PT) ou 180 (BR). <a href="/termos" target="_blank" class="chat-disclaimer-link">Termos e Privacidade</a></small>
+        <small id="msg-counter" class="hidden"></small>
+
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════════
+         TAB 2 — DIRETÓRIO  (Professional Directory)
+    ═══════════════════════════════════════════════ -->
+    <section class="tab-content" id="tab-diretorio">
+
+        <div class="dir-topbar">
+            <div class="filter-chip-row"
+                 id="dir-category-bar"
+                 role="group"
+                 aria-label="Filtrar por categoria">
+                <button class="filter-chip active"
+                        onclick="setDirCategory(this, '')" data-i18n="dir_todas">Todas</button>
+                <button class="filter-chip"
+                        onclick="setDirCategory(this, 'advogada')" data-i18n="dir_advogadas">Advogadas</button>
+                <button class="filter-chip"
+                        onclick="setDirCategory(this, 'psicologa')" data-i18n="dir_psicologas">Psicólogas</button>
+                <button class="filter-chip"
+                        onclick="setDirCategory(this, 'assistente')" data-i18n="dir_assistente">Assist. Social</button>
+            </div>
+            <div class="dir-location-indicator" id="dir-location-indicator"></div>
+        </div>
+
+        <div class="dir-list" id="dir-list">
+            <div class="scaffold-empty">
+                <svg class="scaffold-svg" viewBox="0 0 64 64" fill="none">
+                    <rect x="8"  y="24" width="48" height="32" rx="4"
+                          stroke="#8B2635" stroke-width="2.5"/>
+                    <path d="M22 24v-6a10 10 0 0 1 20 0v6"
+                          stroke="#8B2635" stroke-width="2.5"/>
+                    <path d="M8 36h48" stroke="#8B2635" stroke-width="1.5" stroke-dasharray="4 3"/>
+                    <circle cx="32" cy="44" r="4" fill="#8B2635" opacity=".25"/>
+                    <path d="M26 44h-4m16 0h-4" stroke="#8B2635" stroke-width="1.5" opacity=".4"/>
+                </svg>
+                <h3 class="scaffold-title" data-i18n="dir_title">Rede de Saída</h3>
+                <p class="scaffold-desc" data-i18n="dir_desc">
+                    Profissionais mulheres selecionadas para te apoiar —
+                    advogadas, psicólogas e assistentes sociais.
+                </p>
+                <span class="scaffold-badge" data-i18n="dir_badge">Em desenvolvimento</span>
+            </div>
+        </div>
+
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════════
+         TAB 3 — REDE (Mural + Apoio + Serviços)
+    ═══════════════════════════════════════════════ -->
+    <section class="tab-content" id="tab-rede">
+
+        <div class="rede-pill-bar">
+            <div class="rede-pill-track">
+                <button class="rede-pill active" data-subtab="mural" onclick="switchRedePill('mural')" data-i18n="mural">Mural</button>
+                <button class="rede-pill" data-subtab="apoio" onclick="switchRedePill('apoio')" data-i18n="apoio">Apoio</button>
+                <button class="rede-pill" data-subtab="servicos" onclick="switchRedePill('servicos')" data-i18n="servicos">Serviços</button>
+                <div class="rede-pill-indicator"></div>
+            </div>
+        </div>
+
+        <div class="rede-location-indicator" id="rede-location-indicator"></div>
+        <div class="rede-scroll" id="rede-scroll">
+
+            <div class="rede-subtab-content active" id="subtab-mural">
+                <div class="voz-coletiva-bar" id="voz-coletiva-bar">
+                    <div class="voz-coletiva-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                        </svg>
+                    </div>
+                    <div class="voz-coletiva-content">
+                        <span class="voz-coletiva-label" data-i18n="voz_coletiva_label">Sentimento da Rede</span>
+                        <p class="voz-coletiva-text" id="voz-coletiva-text" data-i18n="voz_coletiva_listening">Escutando a rede…</p>
+                        <span class="voz-coletiva-time" id="voz-coletiva-time"></span>
+                    </div>
+                </div>
+                <div class="mural-filter-row">
+                    <button class="mural-filter active" data-theme="todos" onclick="filterMural(this,'todos')" data-i18n="filter_todos">Todos</button>
+                    <button class="mural-filter" data-theme="cuidado" onclick="filterMural(this,'cuidado')" data-i18n="filter_cuidado">Cuidado</button>
+                    <button class="mural-filter" data-theme="carreira" onclick="filterMural(this,'carreira')" data-i18n="filter_carreira">Carreira</button>
+                    <button class="mural-filter" data-theme="vinculos" onclick="filterMural(this,'vinculos')" data-i18n="filter_vinculos">Vínculos</button>
+                    <button class="mural-filter" data-theme="familia" onclick="filterMural(this,'familia')" data-i18n="filter_familia">Família</button>
+                    <button class="mural-filter" data-theme="autonomia" onclick="filterMural(this,'autonomia')" data-i18n="filter_autonomia">Autonomia</button>
+                    <button class="mural-filter" data-theme="dor" onclick="filterMural(this,'dor')" data-i18n="filter_dor">Dor</button>
+                </div>
+                <div class="mural-feed" id="mural-feed">
+                    <p class="mural-empty" data-i18n="mural_empty">A comunidade aguarda a tua voz.</p>
+                </div>
+            </div>
+
+            <div class="rede-subtab-content" id="subtab-apoio">
+                <div class="apoio-filters">
+                    <input type="text" class="apoio-city-input" id="apoio-city-input" placeholder="Filtrar por cidade…" oninput="filterApoioCards()" data-i18n="apoio_city_placeholder">
+                    <div class="apoio-cat-row">
+                        <button class="apoio-cat-pill active" data-cat="" onclick="filterApoioCat(this,'')" data-i18n="filter_todos">Todos</button>
+                        <button class="apoio-cat-pill" data-cat="acompanhamento" onclick="filterApoioCat(this,'acompanhamento')" data-i18n="apoio_cat_acompanhamento">Acompanhamento</button>
+                        <button class="apoio-cat-pill" data-cat="transporte" onclick="filterApoioCat(this,'transporte')" data-i18n="apoio_cat_transporte">Transporte</button>
+                        <button class="apoio-cat-pill" data-cat="criancas" onclick="filterApoioCat(this,'criancas')" data-i18n="apoio_cat_criancas">Crianças</button>
+                        <button class="apoio-cat-pill" data-cat="juridico" onclick="filterApoioCat(this,'juridico')" data-i18n="apoio_cat_juridico">Jurídico</button>
+                        <button class="apoio-cat-pill" data-cat="grupo" onclick="filterApoioCat(this,'grupo')" data-i18n="apoio_cat_grupo">Grupo</button>
+                        <button class="apoio-cat-pill" data-cat="trabalho" onclick="filterApoioCat(this,'trabalho')" data-i18n="apoio_cat_trabalho">Trabalho</button>
+                    </div>
+                </div>
+                <div class="apoio-requests-section hidden" id="apoio-requests-section">
+                    <h4 class="apoio-section-title" data-i18n="apoio_requests_title">Pedidos de conexão</h4>
+                    <div id="apoio-requests-list"></div>
+                </div>
+                <div class="apoio-cards" id="apoio-cards">
+                    <p class="mural-empty" data-i18n="apoio_empty">Ainda não há cards de apoio.</p>
+                </div>
+            </div>
+
+            <div class="rede-subtab-content" id="subtab-servicos">
+                <div class="servicos-filter-row">
+                    <button class="servicos-filter active" data-cat="" onclick="filterServicos(this,'')" data-i18n="filter_todos">Todos</button>
+                    <button class="servicos-filter" data-cat="emprego" onclick="filterServicos(this,'emprego')" data-i18n="servicos_emprego">Emprego</button>
+                    <button class="servicos-filter" data-cat="formacao" onclick="filterServicos(this,'formacao')" data-i18n="servicos_formacao">Formação</button>
+                    <button class="servicos-filter" data-cat="empreender" onclick="filterServicos(this,'empreender')" data-i18n="servicos_empreender">Empreender</button>
+                    <button class="servicos-filter" data-cat="voluntariado" onclick="filterServicos(this,'voluntariado')" data-i18n="servicos_voluntariado">Voluntariado</button>
+                </div>
+                <div class="servicos-list" id="servicos-list"></div>
+            </div>
+
+        </div>
+
+        <button class="rede-fab hidden" id="rede-fab" onclick="openComposerSheet()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="24" height="24">
+                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+        </button>
+
+        <div class="composer-backdrop hidden" id="composer-backdrop" onclick="closeComposerSheet()"></div>
+        <div class="composer-sheet hidden" id="composer-sheet">
+            <div class="composer-handle"></div>
+
+            <div class="composer-mural" id="composer-mural">
+                <h4 class="composer-title" data-i18n="composer_mural_title">Nova partilha</h4>
+                <div class="composer-anon-row">
+                    <label class="anon-toggle">
+                        <input type="checkbox" id="mural-anon-toggle" checked>
+                        <span class="anon-toggle-slider"></span>
+                    </label>
+                    <span class="anon-toggle-label" id="anon-toggle-label" data-i18n="composer_anon_label">Anónima</span>
+                </div>
+                <select id="mural-theme-select" class="mural-theme-select">
+                    <option value="geral" data-i18n="filter_geral">Geral</option>
+                    <option value="cuidado" data-i18n="filter_cuidado">Cuidado</option>
+                    <option value="carreira" data-i18n="filter_carreira">Carreira</option>
+                    <option value="vinculos" data-i18n="filter_vinculos">Vínculos</option>
+                    <option value="familia" data-i18n="filter_familia">Família</option>
+                    <option value="autonomia" data-i18n="filter_autonomia">Autonomia</option>
+                    <option value="dor" data-i18n="filter_dor">Dor</option>
+                </select>
+                <textarea id="mural-textarea" class="mural-textarea" maxlength="500" rows="3" placeholder="O que queres partilhar?" data-i18n="composer_mural_placeholder"></textarea>
+                <div class="composer-media-preview hidden" id="composer-media-preview"></div>
+                <div class="composer-footer">
+                    <div class="composer-footer-left">
+                        <label for="mural-media-input" class="composer-attach-btn" title="Anexar imagem ou vídeo">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+                            </svg>
+                        </label>
+                        <input type="file" id="mural-media-input" class="sr-file-input" accept="image/*,video/mp4,video/mov,video/webm">
+                        <span class="mural-char-count" id="mural-char-count">0/500</span>
+                    </div>
+                    <button class="btn-composer-submit" onclick="publishMuralPost()" data-i18n="composer_mural_submit">Partilhar</button>
+                </div>
+            </div>
+
+            <div class="composer-apoio hidden" id="composer-apoio">
+                <h4 class="composer-title" data-i18n="composer_apoio_title">Novo card de apoio</h4>
+                <div class="apoio-type-row">
+                    <button class="apoio-type-btn active" data-type="need" onclick="selectApoioType(this,'need')" data-i18n="composer_apoio_need">Preciso de apoio</button>
+                    <button class="apoio-type-btn" data-type="offer" onclick="selectApoioType(this,'offer')" data-i18n="composer_apoio_offer">Posso ajudar</button>
+                </div>
+                <div class="composer-anon-row">
+                    <label class="anon-toggle">
+                        <input type="checkbox" id="apoio-anon-toggle">
+                        <span class="anon-toggle-slider"></span>
+                    </label>
+                    <span class="anon-toggle-label" data-i18n="composer_anon_label">Anónima</span>
+                </div>
+                <input type="text" id="apoio-title-input" class="apoio-title-input" placeholder="Título (ex: Preciso de companhia para consulta)" maxlength="200" data-i18n="composer_apoio_title_placeholder">
+                <select id="apoio-category-select" class="mural-theme-select">
+                    <option value="outro" data-i18n="composer_apoio_cat_label">Categoria</option>
+                    <option value="acompanhamento" data-i18n="apoio_cat_acompanhamento">Acompanhamento</option>
+                    <option value="transporte" data-i18n="apoio_cat_transporte">Transporte</option>
+                    <option value="criancas" data-i18n="apoio_cat_criancas">Crianças</option>
+                    <option value="juridico" data-i18n="apoio_cat_juridico">Jurídico</option>
+                    <option value="grupo" data-i18n="apoio_cat_grupo">Grupo</option>
+                    <option value="trabalho" data-i18n="apoio_cat_trabalho">Trabalho</option>
+                </select>
+                <textarea id="apoio-desc-textarea" class="mural-textarea" maxlength="500" rows="3" placeholder="Descreve o que precisas ou como podes ajudar…" data-i18n="composer_apoio_desc_placeholder"></textarea>
+                <div class="composer-footer">
+                    <button class="btn-composer-submit" onclick="publishApoioCard()" data-i18n="composer_apoio_submit">Publicar</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="rede-toast hidden" id="rede-toast"></div>
+
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════════
+         TAB 4 — MINI CURSOS  (Gated for Irmandade+)
+    ═══════════════════════════════════════════════ -->
+    <section class="tab-content" id="tab-minicursos">
+        <h2 class="section-title" style="font-family:'Playfair Display',Georgia,serif;font-size:20px;color:var(--carmim);margin:0 0 4px;padding:16px 16px 0">Mini Cursos</h2>
+        <p style="font-size:12px;color:#888;padding:0 16px 16px">Cursos de empoderamento para a tua jornada</p>
+        <div class="minicursos-grid" style="padding:0 16px">
+            <div class="minicurso-card">
+                <div class="mc-icon">⚖️</div>
+                <h4 class="mc-title">Conheça os seus Direitos</h4>
+                <p class="mc-desc">Direitos trabalhistas, familiares e proteção contra violência</p>
+            </div>
+            <div class="minicurso-card">
+                <div class="mc-icon">💰</div>
+                <h4 class="mc-title">Finanças para Mulheres</h4>
+                <p class="mc-desc">Independência financeira, investimentos e planeamento</p>
+            </div>
+            <div class="minicurso-card">
+                <div class="mc-icon">🧠</div>
+                <h4 class="mc-title">Saúde Mental e Bem-estar</h4>
+                <p class="mc-desc">Autoestima, limites saudáveis e autocuidado</p>
+            </div>
+            <div class="minicurso-card">
+                <div class="mc-icon">💼</div>
+                <h4 class="mc-title">Carreira e Liderança</h4>
+                <p class="mc-desc">Empreendedorismo, networking e crescimento profissional</p>
+            </div>
+            <div class="minicurso-card">
+                <div class="mc-icon">👩‍👧</div>
+                <h4 class="mc-title">Maternidade Consciente</h4>
+                <p class="mc-desc">Maternidade, educação e equilíbrio trabalho-família</p>
+            </div>
+        </div>
+        <p class="minicursos-coming-soon">Em breve — Conteúdos em preparação</p>
+    </section>
+
+
+    <!-- ═══════════════════════════════════════════════
+         TAB 5 — MEU ESPAÇO  (Profile)
+    ═══════════════════════════════════════════════ -->
+    <section class="tab-content" id="tab-meuspaco">
+
+        <div class="profile-hero">
+            <div class="profile-av-wrap" onclick="document.getElementById('avatar-file-input').click()">
+                <div class="profile-av" id="profile-avatar">?</div>
+                <img class="profile-av-img hidden" id="profile-avatar-img" alt="Avatar">
+                <div class="profile-av-overlay">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                        <circle cx="12" cy="13" r="4"/>
+                    </svg>
+                </div>
+            </div>
+            <h2 class="profile-name" id="profile-name">—</h2>
+            <p  class="profile-user" id="profile-username">@—</p>
+        </div>
+
+        <div class="profile-stats">
+            <div class="stat-cell">
+                <span class="stat-num"   id="stat-messages">0</span>
+                <span class="stat-label" data-i18n="profile_stat_messages">mensagens</span>
+            </div>
+            <div class="stat-cell">
+                <span class="stat-num"   id="stat-since">—</span>
+                <span class="stat-label" data-i18n="profile_stat_since">membro desde</span>
+            </div>
+        </div>
+
+        <!-- Bio -->
+        <div class="profile-section">
+            <h3 class="section-label" data-i18n="profile_bio_label">Bio</h3>
+            <p class="profile-bio-text" id="profile-bio-text">—</p>
+        </div>
+
+        <!-- Voice Settings -->
+        <div class="profile-section" id="voice-settings-section">
+            <h3 class="section-label" data-i18n="voice_title">Configurações de Voz</h3>
+            <div class="voice-setting-row">
+                <span class="voice-setting-label" data-i18n="voice_enabled">Voz ativada</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="voice-enabled-toggle" checked onchange="saveVoicePrefs()">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            <div class="voice-setting-row">
+                <span class="voice-setting-label" data-i18n="voice_profile_label">Perfil vocal</span>
+                <div class="voice-profile-options" id="voice-profile-options">
+                    <button class="voice-profile-btn active" data-profile="acolhedora" onclick="selectVoiceProfile(this)" data-i18n="voice_acolhedora">Acolhedora</button>
+                    <button class="voice-profile-btn" data-profile="firme" onclick="selectVoiceProfile(this)" data-i18n="voice_firme">Firme</button>
+                    <button class="voice-profile-btn" data-profile="neutra" onclick="selectVoiceProfile(this)" data-i18n="voice_neutra">Neutra</button>
+                </div>
+            </div>
+            <div class="voice-setting-row">
+                <span class="voice-setting-label" data-i18n="voice_speed">Velocidade</span>
+                <div class="voice-speed-control">
+                    <input type="range" id="voice-speed-slider" min="0.5" max="1.5" step="0.1" value="1.0" oninput="updateSpeedLabel(this)" onchange="saveVoicePrefs()">
+                    <span class="voice-speed-value" id="voice-speed-value">1.0x</span>
+                </div>
+            </div>
+            <div class="voice-setting-row">
+                <span class="voice-setting-label" data-i18n="voice_whisper_mode">Modo sussurro</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="whisper-mode-toggle" onchange="saveVoicePrefs()">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Edit profile -->
+        <div class="profile-section">
+            <h3 class="section-label" data-i18n="profile_edit_title">Editar perfil</h3>
+            <div class="form-field">
+                <label class="field-label" for="edit-name" data-i18n="profile_edit_name">Nome</label>
+                <input id="edit-name" type="text" class="field-input" placeholder="Seu nome completo" data-i18n="profile_edit_name_placeholder">
+            </div>
+            <div class="form-field">
+                <label class="field-label" for="edit-bio" data-i18n="profile_edit_bio">Bio</label>
+                <textarea id="edit-bio" class="field-textarea"
+                          placeholder="Conte um pouco sobre você…" rows="3" data-i18n="profile_edit_bio_placeholder"></textarea>
+            </div>
+            <button class="btn-save" onclick="saveProfile()" data-i18n="profile_save">Salvar</button>
+        </div>
+
+        <!-- Meu Plano -->
+        <div class="profile-section">
+            <div id="meu-plano-card" class="meu-plano-card">
+                <div class="meu-plano-info">
+                    <span class="meu-plano-label">Meu Plano</span>
+                    <span class="plan-tier-label">Essencial</span>
+                </div>
+                <a href="/checkout" class="btn-change-plan">Mudar plano</a>
+            </div>
+        </div>
+
+        <!-- Privacidade -->
+        <div class="profile-section">
+            <h3 class="section-label">Privacidade</h3>
+            <p class="privacy-info-text">Os teus dados são tratados em conformidade com a LGPD e o RGPD. Podes exercer os teus direitos a qualquer momento.</p>
+            <button class="btn-delete-account" onclick="confirmDeleteAccount()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16">
+                    <polyline points="3 6 5 6 21 6"/>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    <line x1="10" y1="11" x2="10" y2="17"/>
+                    <line x1="14" y1="11" x2="14" y2="17"/>
+                </svg>
+                Apagar a Minha Conta e Todos os Dados
+            </button>
+        </div>
+
+        <!-- Logout -->
+        <div class="profile-section">
+            <a href="#" onclick="logoutUser(); return false;" class="btn-logout-profile" data-i18n="btn_logout_profile">Sair da conta</a>
+        </div>
+
+    </section>
+
+</main><!-- .app-main -->
+
+<!-- ── NOTIFICATION SHEET ──────────────────────────────── -->
+<div class="notif-backdrop hidden" id="notif-backdrop" onclick="toggleNotifications()"></div>
+<div class="notif-sheet hidden" id="notif-sheet">
+    <div class="composer-handle"></div>
+    <h4 class="composer-title">Notificações</h4>
+    <div id="notif-list" class="notif-list">
+        <p class="notif-empty">Nenhuma notificação.</p>
+    </div>
+</div>
+
+<!-- ── ALERTA SEGURO FULLSCREEN ───────────────────────── -->
+<div class="fullscreen-overlay hidden" id="alerta-seguro-view">
+    <div class="fs-topbar">
+        <span class="fs-topbar-title">🛡️ Alerta Seguro</span>
+        <button class="fs-topbar-close" onclick="closeAlertaSeguro()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+        </button>
+    </div>
+    <div class="fs-content">
+        <div id="alerta-inactive-view">
+            <div class="alerta-section">
+                <h3 class="alerta-section-title">Contatas de confiança</h3>
+                <p class="alerta-section-desc">Escolha até 4 usuárias do Alice que receberão um alerta com sua localização.</p>
+                <div id="emergency-contacts-list" class="emergency-contacts-list"></div>
+                <button class="btn-add-contact" id="btn-add-contact" onclick="openContactSearch()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    Adicionar contata
+                </button>
+            </div>
+            <div class="alerta-section">
+                <button class="btn-activate-alert" id="btn-activate-alert" onclick="activateAlert()" disabled>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                    Ativar Alerta
+                </button>
+                <p class="alerta-disclaimer">Ao ativar, suas contatas receberão uma notificação com um link para acompanhar sua localização em tempo real.</p>
+            </div>
+        </div>
+        <div id="alerta-active-view" class="hidden">
+            <div class="alerta-active-card">
+                <div class="alerta-pulse-wrap">
+                    <div class="alerta-pulse-ring"></div>
+                    <div class="alerta-pulse-dot"></div>
+                </div>
+                <h3 class="alerta-active-title">Alerta Ativo</h3>
+                <p class="alerta-active-time" id="alerta-elapsed">00:00</p>
+                <p class="alerta-active-sub">Suas contatas foram notificadas e podem ver sua localização.</p>
+                <button class="btn-deactivate-alert" onclick="deactivateAlert()">Desativar Alerta</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ── CONTACT SEARCH MODAL ──────────────────────────── -->
+<div class="contact-search-backdrop hidden" id="contact-search-backdrop" onclick="closeContactSearch()"></div>
+<div class="contact-search-sheet hidden" id="contact-search-sheet">
+    <div class="composer-handle"></div>
+    <h4 class="composer-title">Buscar usuária</h4>
+    <input type="text" class="contact-search-input" id="contact-search-input" placeholder="Nome ou username..." oninput="searchEmergencyContacts(this.value)">
+    <div id="contact-search-results" class="contact-search-results"></div>
+</div>
+
+<!-- ── MEU DIÁRIO FULLSCREEN ─────────────────────────── -->
+<div class="fullscreen-overlay hidden" id="diary-view">
+    <div class="fs-topbar">
+        <span class="fs-topbar-title">📓 Meu Diário</span>
+        <button class="fs-topbar-close" onclick="closeDiaryView()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+        </button>
+    </div>
+    <div class="fs-content" id="diary-content">
+        <div id="diary-list-view">
+            <div id="diary-notes-list" class="diary-notes-list">
+                <div class="diary-empty">
+                    <p>Seu diário está vazio.</p>
+                    <p>Comece a escrever seus pensamentos, lembretes e reflexões...</p>
+                </div>
+            </div>
+            <button class="diary-fab" onclick="openDiaryEditor()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="24" height="24">
+                    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+            </button>
+        </div>
+        <div id="diary-editor-view" class="hidden">
+            <input type="text" class="diary-title-input" id="diary-title-input" placeholder="Título da nota..." maxlength="200">
+            <div class="diary-label-chips" id="diary-label-chips">
+                <button class="diary-label-chip active" data-label="geral" onclick="selectDiaryLabel(this)">Geral</button>
+                <button class="diary-label-chip" data-label="para_lembrar" onclick="selectDiaryLabel(this)">Para lembrar</button>
+                <button class="diary-label-chip" data-label="nunca_esquecer" onclick="selectDiaryLabel(this)">Nunca esquecer</button>
+                <button class="diary-label-chip" data-label="minha_forca" onclick="selectDiaryLabel(this)">Minha força</button>
+            </div>
+            <textarea class="diary-content-input" id="diary-content-input" placeholder="Escreva aqui..." rows="8"></textarea>
+            <div class="diary-editor-footer">
+                <button class="btn-diary-cancel" onclick="closeDiaryEditor()">Cancelar</button>
+                <button class="btn-diary-save" onclick="saveDiaryNote()">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ── BOTTOM NAVIGATION ───────────────────────────────── -->
+<nav class="bottom-nav" role="navigation" aria-label="Navegação principal" data-i18n-aria="nav_main">
+
+    <button class="nav-item active"
+            data-tab="home"
+            onclick="switchTab('home')"
+            aria-label="Home">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+        <span class="nav-label" data-i18n="tab_home">Home</span>
+    </button>
+
+    <button class="nav-item"
+            data-tab="diretorio"
+            onclick="switchTab('diretorio')"
+            aria-label="Diretório">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+        <span class="nav-label" data-i18n="tab_diretorio">Diretório</span>
+    </button>
+
+    <button class="nav-item"
+            data-tab="rede"
+            onclick="switchTab('rede')"
+            aria-label="Rede">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M12 22V12"/>
+            <path d="M12 12C12 8 9 5 5 5c0 4 3 7 7 7z"/>
+            <path d="M12 12C12 8 15 5 19 5c0 4-3 7-7 7z"/>
+            <path d="M7 20c2-2 3-4 5-4s3 2 5 4"/>
+        </svg>
+        <span class="nav-label" data-i18n="tab_rede">Rede</span>
+    </button>
+
+    <button class="nav-item"
+            data-tab="minicursos"
+            onclick="switchTab('minicursos')"
+            aria-label="Mini Cursos">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+            <path d="M6 12v5c0 1.1 2.7 3 6 3s6-1.9 6-3v-5"/>
+        </svg>
+        <span class="nav-label">Mini Cursos</span>
+    </button>
+
+    <button class="nav-item"
+            data-tab="meuspaco"
+            onclick="switchTab('meuspaco')"
+            aria-label="Meu Espaço">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+        </svg>
+        <span class="nav-label" data-i18n="tab_meuspaco">Meu Espaço</span>
+    </button>
+
+</nav>
+
+
+<!-- ── EMERGENCY BANNER ────────────────────────────────── -->
+<div id="emergency-banner" class="emergency-banner hidden">
+    <svg viewBox="0 0 24 24" fill="currentColor" style="width:14px;height:14px;flex-shrink:0">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+    </svg>
+    <span data-i18n="emergency_banner">Modo de apoio imediato ativo</span>
+    <button class="emergency-banner-close" onclick="toggleEmergency()">✕</button>
+</div>
+
+
+<!-- ── GEOLOCATION PERMISSION DIALOG ─────────────────── -->
+<div class="geo-dialog-backdrop hidden" id="geo-dialog-backdrop">
+    <div class="geo-dialog">
+        <div class="geo-dialog-icon">📍</div>
+        <h3 class="geo-dialog-title">Localização</h3>
+        <p class="geo-dialog-text">Alice gostaria de usar a sua localização para personalizar o conteúdo da Rede e do Diretório para a sua cidade.</p>
+        <div class="geo-dialog-btns">
+            <button class="geo-dialog-btn geo-dialog-deny" id="geo-deny-btn" onclick="geoDialogDeny()">Agora não</button>
+            <button class="geo-dialog-btn geo-dialog-allow" id="geo-allow-btn" onclick="geoDialogAllow()">Permitir</button>
+        </div>
+    </div>
+</div>
+
+<!-- ── TOAST ──────────────────────────────────────────── -->
+<div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+<!-- ── SAFE EXIT BUTTON ──────────────────────────────── -->
+<button class="safe-exit-btn hidden" id="safe-exit-btn" onclick="safeExit()" title="Sair rapidamente" aria-label="Saída segura" data-i18n-title="safe_exit_title">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+        <path d="M18 6L6 18M6 6l12 12"/>
+    </svg>
+</button>
+
+<input type="file" id="avatar-file-input" accept="image/*" style="display:none" onchange="uploadAvatar(this)">
+
+<p class="app-copyright">© 2024 Projeto ALICE. Todos os direitos reservados. A tecnologia e curadoria deste app são protegidas por leis de propriedade intelectual.</p>
+
+<script src="{{ url_for('static', filename='js/app.js') }}?v=8"></script>
+</body>
+</html>
