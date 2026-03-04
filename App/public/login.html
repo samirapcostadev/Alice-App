@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#F7F5F2">
+    <title>Alice</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='img/favicon.svg') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}?v=5">
+</head>
+<body>
+<div class="bg-blobs" aria-hidden="true"></div>
+
+    <!--
+    ═══════════════════════════════════════════════════════════════════
+    CORNER BOTANICAL FLOWERS
+    ───────────────────────────────────────────────────────────────────
+    Each SVG is 220×220px. The flower center sits at (65, 65) in the
+    viewBox. Petals are drawn as bezier curves from the flower center
+    outward (8 petals at 45° intervals). Two stems branch off with
+    paired leaves and a small bud at the tip. The TR/BL/BR corners
+    reuse this same design via CSS transform: scaleX(-1) etc.
+
+    Petal path (relative to flower center via <g transform>):
+      M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z
+      = starts at center, bulges to ±7 at mid-height, tips at y=-22
+
+    Leaf path (positioned on stem, centered on vein):
+      Right leaf: M x,y C x-8,y-8 x-8,y-20 x,y-22 C x+8,y-20 ...
+    ═══════════════════════════════════════════════════════════════════
+    -->
+
+    <!-- TOP-LEFT -->
+    <svg class="corner-flower tl" viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="#8B5A8E" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+            <!-- Main flower at (65, 65) -->
+            <g transform="translate(65,65)">
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(0)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(45)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(90)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(135)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(180)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(225)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(270)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(315)"/>
+                <circle r="9"/>
+                <circle r="4"/>
+            </g>
+            <!-- Stem → right edge, with paired leaves -->
+            <path d="M74,56 C92,46 116,38 142,32 C165,27 188,23 210,21"/>
+            <!-- Leaf pair 1 -->
+            <path d="M116,40 C108,31 110,19 120,17 C124,27 122,39 116,40Z"/>
+            <path d="M122,42 C132,33 130,21 120,17 C118,29 122,41 122,42Z"/>
+            <line x1="116" y1="40" x2="120" y2="17" stroke-width="0.8"/>
+            <!-- Leaf pair 2 -->
+            <path d="M164,30 C156,21 158,9  168,7  C172,17 170,29 164,30Z"/>
+            <path d="M170,32 C180,23 178,11 168,7  C166,19 170,31 170,32Z"/>
+            <line x1="164" y1="30" x2="168" y2="7"  stroke-width="0.8"/>
+            <!-- Bud at tip -->
+            <path d="M207,22 C204,15 206,9 210,7 C214,9 215,15 207,22Z"/>
+
+            <!-- Stem ↓ bottom edge, with paired leaves -->
+            <path d="M71,76 C78,96 84,120 88,144 C92,166 93,188 94,210"/>
+            <!-- Leaf pair 3 -->
+            <path d="M86,120 C78,114 76,102 86,100 C90,108 89,119 86,120Z"/>
+            <path d="M90,122 C98,116 98,104 86,100 C86,112 90,121 90,122Z"/>
+            <line x1="86" y1="120" x2="86" y2="100" stroke-width="0.8"/>
+            <!-- Leaf pair 4 -->
+            <path d="M90,162 C82,156 80,144 90,142 C94,150 93,161 90,162Z"/>
+            <path d="M94,164 C102,158 102,146 90,142 C90,154 94,163 94,164Z"/>
+            <line x1="90" y1="162" x2="90" y2="142" stroke-width="0.8"/>
+            <!-- Bud at bottom -->
+            <path d="M94,207 C91,200 93,194 97,192 C101,194 102,200 94,207Z"/>
+        </g>
+    </svg>
+
+    <!-- TOP-RIGHT (mirror of TL via CSS scaleX(-1)) -->
+    <svg class="corner-flower tr" viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="#8B5A8E" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+            <g transform="translate(65,65)">
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(0)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(45)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(90)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(135)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(180)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(225)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(270)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(315)"/>
+                <circle r="9"/>
+                <circle r="4"/>
+            </g>
+            <path d="M74,56 C92,46 116,38 142,32 C165,27 188,23 210,21"/>
+            <path d="M116,40 C108,31 110,19 120,17 C124,27 122,39 116,40Z"/>
+            <path d="M122,42 C132,33 130,21 120,17 C118,29 122,41 122,42Z"/>
+            <line x1="116" y1="40" x2="120" y2="17" stroke-width="0.8"/>
+            <path d="M164,30 C156,21 158,9  168,7  C172,17 170,29 164,30Z"/>
+            <path d="M170,32 C180,23 178,11 168,7  C166,19 170,31 170,32Z"/>
+            <line x1="164" y1="30" x2="168" y2="7"  stroke-width="0.8"/>
+            <path d="M207,22 C204,15 206,9 210,7 C214,9 215,15 207,22Z"/>
+            <path d="M71,76 C78,96 84,120 88,144 C92,166 93,188 94,210"/>
+            <path d="M86,120 C78,114 76,102 86,100 C90,108 89,119 86,120Z"/>
+            <path d="M90,122 C98,116 98,104 86,100 C86,112 90,121 90,122Z"/>
+            <line x1="86" y1="120" x2="86" y2="100" stroke-width="0.8"/>
+            <path d="M90,162 C82,156 80,144 90,142 C94,150 93,161 90,162Z"/>
+            <path d="M94,164 C102,158 102,146 90,142 C90,154 94,163 94,164Z"/>
+            <line x1="90" y1="162" x2="90" y2="142" stroke-width="0.8"/>
+            <path d="M94,207 C91,200 93,194 97,192 C101,194 102,200 94,207Z"/>
+        </g>
+    </svg>
+
+    <!-- BOTTOM-LEFT (scaleY(-1)) -->
+    <svg class="corner-flower bl" viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="#8B5A8E" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+            <g transform="translate(65,65)">
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(0)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(45)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(90)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(135)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(180)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(225)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(270)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(315)"/>
+                <circle r="9"/>
+                <circle r="4"/>
+            </g>
+            <path d="M74,56 C92,46 116,38 142,32 C165,27 188,23 210,21"/>
+            <path d="M116,40 C108,31 110,19 120,17 C124,27 122,39 116,40Z"/>
+            <path d="M122,42 C132,33 130,21 120,17 C118,29 122,41 122,42Z"/>
+            <line x1="116" y1="40" x2="120" y2="17" stroke-width="0.8"/>
+            <path d="M164,30 C156,21 158,9  168,7  C172,17 170,29 164,30Z"/>
+            <path d="M170,32 C180,23 178,11 168,7  C166,19 170,31 170,32Z"/>
+            <line x1="164" y1="30" x2="168" y2="7"  stroke-width="0.8"/>
+            <path d="M207,22 C204,15 206,9 210,7 C214,9 215,15 207,22Z"/>
+            <path d="M71,76 C78,96 84,120 88,144 C92,166 93,188 94,210"/>
+            <path d="M86,120 C78,114 76,102 86,100 C90,108 89,119 86,120Z"/>
+            <path d="M90,122 C98,116 98,104 86,100 C86,112 90,121 90,122Z"/>
+            <line x1="86" y1="120" x2="86" y2="100" stroke-width="0.8"/>
+            <path d="M90,162 C82,156 80,144 90,142 C94,150 93,161 90,162Z"/>
+            <path d="M94,164 C102,158 102,146 90,142 C90,154 94,163 94,164Z"/>
+            <line x1="90" y1="162" x2="90" y2="142" stroke-width="0.8"/>
+            <path d="M94,207 C91,200 93,194 97,192 C101,194 102,200 94,207Z"/>
+        </g>
+    </svg>
+
+    <!-- BOTTOM-RIGHT (scale(-1,-1)) -->
+    <svg class="corner-flower br" viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="#8B5A8E" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+            <g transform="translate(65,65)">
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(0)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(45)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(90)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(135)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(180)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(225)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(270)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(315)"/>
+                <circle r="9"/>
+                <circle r="4"/>
+            </g>
+            <path d="M74,56 C92,46 116,38 142,32 C165,27 188,23 210,21"/>
+            <path d="M116,40 C108,31 110,19 120,17 C124,27 122,39 116,40Z"/>
+            <path d="M122,42 C132,33 130,21 120,17 C118,29 122,41 122,42Z"/>
+            <line x1="116" y1="40" x2="120" y2="17" stroke-width="0.8"/>
+            <path d="M164,30 C156,21 158,9  168,7  C172,17 170,29 164,30Z"/>
+            <path d="M170,32 C180,23 178,11 168,7  C166,19 170,31 170,32Z"/>
+            <line x1="164" y1="30" x2="168" y2="7"  stroke-width="0.8"/>
+            <path d="M207,22 C204,15 206,9 210,7 C214,9 215,15 207,22Z"/>
+            <path d="M71,76 C78,96 84,120 88,144 C92,166 93,188 94,210"/>
+            <path d="M86,120 C78,114 76,102 86,100 C90,108 89,119 86,120Z"/>
+            <path d="M90,122 C98,116 98,104 86,100 C86,112 90,121 90,122Z"/>
+            <line x1="86" y1="120" x2="86" y2="100" stroke-width="0.8"/>
+            <path d="M90,162 C82,156 80,144 90,142 C94,150 93,161 90,162Z"/>
+            <path d="M94,164 C102,158 102,146 90,142 C90,154 94,163 94,164Z"/>
+            <line x1="90" y1="162" x2="90" y2="142" stroke-width="0.8"/>
+            <path d="M94,207 C91,200 93,194 97,192 C101,194 102,200 94,207Z"/>
+        </g>
+    </svg>
+
+    <div class="auth-screen">
+        <div class="auth-card">
+
+            <!--
+            ═══════════════════════════════════════════════════════
+            BRAND BLOCK
+
+            Logo mark: The Playfair Display serif "A" with a small
+            filled heart positioned at its upper-right (top: 4px,
+            right: 0 within a container that has padding-right: 18px).
+            This makes the heart overlap the A's right leg at the
+            apex level — matching the reference exactly.
+
+            Text: "Alice" large bold serif with acronym subtitle.
+            Colors in crimson/plum palette.
+            "Criar conta" is also crimson, not gray.
+            ═══════════════════════════════════════════════════════
+            -->
+            <div class="brand">
+                <img class="brand-logo" src="/static/img/logo.png" alt="Alice">
+                <p class="brand-subtitle">a sua melhor amiga</p>
+                <p class="brand-acronym">Artificial Learning with Intersectional &amp;<br>Critical Epistemology</p>
+            </div>
+
+            <div class="lang-selector">
+                <button class="lang-pill lang-pill--active" data-lang="pt-br">PT-BR</button>
+                <button class="lang-pill" data-lang="pt-pt">PT-PT</button>
+                <button class="lang-pill" data-lang="es">ES</button>
+                <button class="lang-pill" data-lang="en">EN</button>
+                <button class="lang-pill" data-lang="fr">FR</button>
+            </div>
+
+            {% if error %}
+            <div class="field-error-banner">{{ error }}</div>
+            {% endif %}
+
+            <form method="POST" class="login-form">
+                <div class="field">
+                    <input
+                        type="text"
+                        name="username"
+                        placeholder="Usuário"
+                        autocomplete="username"
+                        required>
+                </div>
+                <div class="field field-password">
+                    <input
+                        type="password"
+                        name="password"
+                        id="login-password"
+                        placeholder="Senha"
+                        autocomplete="current-password"
+                        required>
+                    <button type="button" class="btn-toggle-pw" onclick="togglePasswordVisibility('login-password', this)" aria-label="Mostrar senha">
+                        <svg class="eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="20" height="20"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                        <svg class="eye-closed hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="20" height="20"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                    </button>
+                </div>
+                <button type="submit" class="btn-enter">Entrar</button>
+            </form>
+
+            <div class="footer-links">
+                <a href="#" class="link-forgot" onclick="showForgotPassword(event)">Esqueci minha senha</a>
+                <span class="link-separator">·</span>
+                <a href="{{ url_for('register') }}" class="link-register">Criar conta</a>
+            </div>
+
+            <div id="forgot-password-form" class="forgot-form hidden">
+                <h3 class="forgot-title">Recuperar senha</h3>
+                <p class="forgot-subtitle">Informe seu usuário e email de cadastro para definir uma nova senha.</p>
+                <div class="field">
+                    <input type="text" id="forgot-username" placeholder="Usuário" required>
+                </div>
+                <div class="field">
+                    <input type="email" id="forgot-email" placeholder="Email" required>
+                </div>
+                <div class="field field-password">
+                    <input type="password" id="forgot-new-password" placeholder="Nova senha" required>
+                    <button type="button" class="btn-toggle-pw" onclick="togglePasswordVisibility('forgot-new-password', this)" aria-label="Mostrar senha">
+                        <svg class="eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="20" height="20"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                        <svg class="eye-closed hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="20" height="20"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                    </button>
+                </div>
+                <button type="button" class="btn-enter" id="btn-reset-pw" onclick="submitForgotPassword()">Redefinir senha</button>
+                <button type="button" class="btn-forgot-cancel" onclick="hideForgotPassword()">Voltar ao login</button>
+            </div>
+
+        </div>
+    </div>
+
+<script>
+    if (localStorage.getItem('alice_token')) { window.location.href = '/'; }
+
+    const AUTH_LABELS = {
+        'pt-br': { user: 'Usuário', pass: 'Senha', enter: 'Entrar', create: 'Criar conta', forgot: 'Esqueci minha senha', err: 'Erro ao entrar.', conn: 'Erro de conexão. Tente novamente.', reset_title: 'Recuperar senha', reset_sub: 'Informe seu usuário e email de cadastro para definir uma nova senha.', new_pass: 'Nova senha', reset_btn: 'Redefinir senha', back_login: 'Voltar ao login', reset_ok: 'Senha redefinida com sucesso! Faça login.', reset_err: 'Não foi possível redefinir a senha.' },
+        'pt-pt': { user: 'Utilizador', pass: 'Palavra-passe', enter: 'Entrar', create: 'Criar conta', forgot: 'Esqueci a palavra-passe', err: 'Erro ao entrar.', conn: 'Erro de ligação. Tente novamente.', reset_title: 'Recuperar palavra-passe', reset_sub: 'Informe o utilizador e email de registo para definir nova palavra-passe.', new_pass: 'Nova palavra-passe', reset_btn: 'Redefinir', back_login: 'Voltar ao login', reset_ok: 'Palavra-passe redefinida! Inicie sessão.', reset_err: 'Não foi possível redefinir.' },
+        'es':    { user: 'Usuario', pass: 'Contraseña', enter: 'Entrar', create: 'Crear cuenta', forgot: 'Olvidé mi contraseña', err: 'Error al iniciar sesión.', conn: 'Error de conexión. Intente de nuevo.', reset_title: 'Recuperar contraseña', reset_sub: 'Ingrese su usuario y email para definir una nueva contraseña.', new_pass: 'Nueva contraseña', reset_btn: 'Restablecer', back_login: 'Volver al login', reset_ok: '¡Contraseña restablecida! Inicie sesión.', reset_err: 'No se pudo restablecer.' },
+        'en':    { user: 'Username', pass: 'Password', enter: 'Sign in', create: 'Create account', forgot: 'Forgot password', err: 'Login failed.', conn: 'Connection error. Try again.', reset_title: 'Reset password', reset_sub: 'Enter your username and email to set a new password.', new_pass: 'New password', reset_btn: 'Reset password', back_login: 'Back to login', reset_ok: 'Password reset! Sign in now.', reset_err: 'Could not reset password.' },
+        'fr':    { user: 'Identifiant', pass: 'Mot de passe', enter: 'Se connecter', create: 'Créer un compte', forgot: 'Mot de passe oublié', err: 'Erreur de connexion.', conn: 'Erreur réseau. Réessayez.', reset_title: 'Réinitialiser', reset_sub: 'Entrez votre identifiant et email pour définir un nouveau mot de passe.', new_pass: 'Nouveau mot de passe', reset_btn: 'Réinitialiser', back_login: 'Retour', reset_ok: 'Mot de passe réinitialisé ! Connectez-vous.', reset_err: 'Impossible de réinitialiser.' }
+    };
+
+    let selectedLang = localStorage.getItem('alice_lang') || 'pt-br';
+
+    function setActiveLang(lang) {
+        selectedLang = lang;
+        localStorage.setItem('alice_lang', lang);
+        document.querySelectorAll('.lang-pill').forEach(p => {
+            p.classList.toggle('lang-pill--active', p.dataset.lang === lang);
+        });
+        const labels = AUTH_LABELS[lang] || AUTH_LABELS['pt-br'];
+        document.querySelector('input[name="username"]').placeholder = labels.user;
+        document.querySelector('input[name="password"]').placeholder = labels.pass;
+        const enterBtn = document.querySelector('.login-form .btn-enter');
+        if (enterBtn) enterBtn.textContent = labels.enter;
+        document.querySelector('.link-register').textContent = labels.create;
+        const forgotLink = document.querySelector('.link-forgot');
+        if (forgotLink) forgotLink.textContent = labels.forgot;
+        const forgotTitle = document.querySelector('.forgot-title');
+        if (forgotTitle) forgotTitle.textContent = labels.reset_title;
+        const forgotSub = document.querySelector('.forgot-subtitle');
+        if (forgotSub) forgotSub.textContent = labels.reset_sub;
+        const forgotUser = document.getElementById('forgot-username');
+        if (forgotUser) forgotUser.placeholder = labels.user;
+        const forgotEmail = document.getElementById('forgot-email');
+        if (forgotEmail) forgotEmail.placeholder = 'Email';
+        const forgotNewPw = document.getElementById('forgot-new-password');
+        if (forgotNewPw) forgotNewPw.placeholder = labels.new_pass;
+        const resetBtn = document.getElementById('btn-reset-pw');
+        if (resetBtn) resetBtn.textContent = labels.reset_btn;
+        const cancelBtn = document.querySelector('.btn-forgot-cancel');
+        if (cancelBtn) cancelBtn.textContent = labels.back_login;
+    }
+
+    document.querySelectorAll('.lang-pill').forEach(pill => {
+        pill.addEventListener('click', () => setActiveLang(pill.dataset.lang));
+    });
+
+    setActiveLang(selectedLang);
+
+    function togglePasswordVisibility(inputId, btn) {
+        const inp = document.getElementById(inputId);
+        if (!inp) return;
+        const isPassword = inp.type === 'password';
+        inp.type = isPassword ? 'text' : 'password';
+        btn.querySelector('.eye-open').classList.toggle('hidden', !isPassword);
+        btn.querySelector('.eye-closed').classList.toggle('hidden', isPassword);
+    }
+
+    function showForgotPassword(e) {
+        if (e) e.preventDefault();
+        document.querySelector('.login-form').classList.add('hidden');
+        document.querySelector('.footer-links').classList.add('hidden');
+        document.getElementById('forgot-password-form').classList.remove('hidden');
+    }
+
+    function hideForgotPassword() {
+        document.getElementById('forgot-password-form').classList.add('hidden');
+        document.querySelector('.login-form').classList.remove('hidden');
+        document.querySelector('.footer-links').classList.remove('hidden');
+        const b = document.querySelector('.field-error-banner');
+        if (b) b.style.display = 'none';
+        const s = document.querySelector('.field-success-banner');
+        if (s) s.style.display = 'none';
+    }
+
+    async function submitForgotPassword() {
+        const labels = AUTH_LABELS[selectedLang] || AUTH_LABELS['pt-br'];
+        const btn = document.getElementById('btn-reset-pw');
+        btn.disabled = true; btn.textContent = '…';
+
+        const username = document.getElementById('forgot-username').value.trim();
+        const email = document.getElementById('forgot-email').value.trim();
+        const newPassword = document.getElementById('forgot-new-password').value;
+
+        if (!username || !email || !newPassword) {
+            btn.disabled = false; btn.textContent = labels.reset_btn;
+            return;
+        }
+
+        let banner = document.querySelector('.field-error-banner');
+        if (!banner) {
+            banner = document.createElement('div');
+            banner.className = 'field-error-banner';
+            document.getElementById('forgot-password-form').insertAdjacentElement('afterbegin', banner);
+        }
+        banner.style.display = 'none';
+
+        let successBanner = document.querySelector('.field-success-banner');
+        if (!successBanner) {
+            successBanner = document.createElement('div');
+            successBanner.className = 'field-success-banner';
+            document.getElementById('forgot-password-form').insertAdjacentElement('afterbegin', successBanner);
+        }
+        successBanner.style.display = 'none';
+
+        try {
+            const res = await fetch('/api/auth/reset-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, email, new_password: newPassword })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                successBanner.textContent = labels.reset_ok;
+                successBanner.style.display = 'block';
+                setTimeout(() => hideForgotPassword(), 2000);
+            } else {
+                banner.textContent = data.error || labels.reset_err;
+                banner.style.display = 'block';
+            }
+        } catch {
+            banner.textContent = labels.conn;
+            banner.style.display = 'block';
+        }
+        btn.disabled = false; btn.textContent = labels.reset_btn;
+    }
+
+    if (new URLSearchParams(window.location.search).get('deleted') === '1') {
+        const form = document.querySelector('.login-form');
+        let banner = document.querySelector('.field-success-banner');
+        if (!banner) {
+            banner = document.createElement('div');
+            banner.className = 'field-success-banner';
+            banner.textContent = 'Conta e dados apagados com sucesso.';
+            form.insertAdjacentElement('beforebegin', banner);
+        }
+    }
+
+    document.querySelector('.login-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const labels = AUTH_LABELS[selectedLang] || AUTH_LABELS['pt-br'];
+        const btn = this.querySelector('button[type="submit"]');
+        btn.disabled = true; btn.textContent = '…';
+
+        const username = this.querySelector('input[name="username"]').value.trim();
+        const password = this.querySelector('input[name="password"]').value;
+
+        let banner = document.querySelector('.field-error-banner');
+        if (!banner) {
+            banner = document.createElement('div');
+            banner.className = 'field-error-banner';
+            this.insertAdjacentElement('beforebegin', banner);
+        }
+        banner.style.display = 'none';
+
+        try {
+            const res  = await fetch('/api/auth/login', {
+                method:  'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body:    JSON.stringify({ username, password, lang: selectedLang })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                localStorage.setItem('alice_token', data.token);
+                localStorage.setItem('alice_lang', selectedLang);
+                window.location.href = '/';
+            } else {
+                banner.textContent   = data.error || labels.err;
+                banner.style.display = 'block';
+                btn.disabled = false; btn.textContent = labels.enter;
+            }
+        } catch {
+            banner.textContent   = labels.conn;
+            banner.style.display = 'block';
+            btn.disabled = false; btn.textContent = labels.enter;
+        }
+    });
+</script>
+<p class="app-copyright" style="text-align:center;font-size:10px;color:rgba(100,100,100,0.45);padding:12px 16px 4px;line-height:1.4">© 2024 Projeto ALICE. Todos os direitos reservados. A tecnologia e curadoria deste app são protegidas por leis de propriedade intelectual.</p>
+</body>
+</html>

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#F7F5F2">
+    <title>Alice — Termos de Uso e Privacidade</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='img/favicon.svg') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}?v=5">
+    <style>
+        .termos-page {
+            min-height: 100vh;
+            padding: 20px 16px 40px;
+            max-width: 520px;
+            margin: 0 auto;
+        }
+        .termos-card {
+            background: rgba(255, 252, 249, 0.72);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, 0.65);
+            border-radius: 16px;
+            padding: 24px 20px 32px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+        }
+        .termos-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #6B3A6D;
+            font-size: 13px;
+            font-weight: 500;
+            text-decoration: none;
+            margin-bottom: 16px;
+        }
+        .termos-back:hover { opacity: 0.7; }
+        .termos-title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 24px;
+            color: #8B2635;
+            margin: 0 0 4px;
+        }
+        .termos-subtitle {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 24px;
+        }
+        .termos-section {
+            margin-bottom: 20px;
+        }
+        .termos-section h3 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 16px;
+            color: #6B3A6D;
+            margin: 0 0 8px;
+        }
+        .termos-section p, .termos-section ul {
+            font-size: 13px;
+            line-height: 1.65;
+            color: #2C2C2C;
+            margin: 0 0 10px;
+        }
+        .termos-section ul {
+            padding-left: 18px;
+        }
+        .termos-section li {
+            margin-bottom: 4px;
+        }
+        .termos-section strong {
+            color: #6B3A6D;
+        }
+        .termos-divider {
+            border: none;
+            border-top: 1px solid rgba(0,0,0,0.06);
+            margin: 24px 0;
+        }
+        .termos-footer {
+            text-align: center;
+            font-size: 11px;
+            color: #888;
+            margin-top: 24px;
+            line-height: 1.5;
+        }
+        .emergency-box {
+            background: rgba(139, 38, 53, 0.06);
+            border: 1px solid rgba(139, 38, 53, 0.2);
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-top: 10px;
+        }
+        .emergency-box p {
+            margin: 0;
+            font-size: 13px;
+            color: #8B2635;
+        }
+        .emergency-box strong {
+            color: #8B2635;
+        }
+    </style>
+</head>
+<body>
+<div class="bg-blobs" aria-hidden="true"></div>
+
+<div class="termos-page" id="termos-protected">
+    <a href="javascript:history.back()" class="termos-back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+            <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Voltar
+    </a>
+
+    <div class="termos-card">
+        <h1 class="termos-title">Termos de Uso e Política de Privacidade</h1>
+        <p class="termos-subtitle">Última atualização: Março 2026 · Em conformidade com a LGPD (Lei 13.709/2018) e o RGPD (Regulamento UE 2016/679)</p>
+
+        <div class="termos-section">
+            <h3>1. Isenção de Responsabilidade</h3>
+            <p>A ALICE (<em>Artificial Learning with Intersectional & Critical Epistemology</em>) é uma Inteligência Artificial de apoio emocional baseada em curadoria ética, com perspetiva feminista, decolonial e interseccional.</p>
+            <p><strong>A ALICE não substitui aconselhamento médico, psicológico, jurídico ou profissional.</strong> As respostas geradas pela IA têm caráter informativo e de acolhimento, não constituindo diagnóstico, tratamento ou orientação profissional. A utilizadora deve sempre procurar profissionais qualificados para questões de saúde, direito ou segurança.</p>
+            <p>A ALICE pode cometer erros. As informações fornecidas são baseadas em curadoria ética e modelos de linguagem, mas não garantimos a exatidão, completude ou adequação de todas as respostas para cada situação individual.</p>
+        </div>
+
+        <hr class="termos-divider">
+
+        <div class="termos-section">
+            <h3>2. Tratamento de Dados Sensíveis</h3>
+            <p>Para personalizar a experiência de acolhimento, a ALICE processa os seguintes dados sensíveis mediante consentimento explícito da utilizadora:</p>
+            <ul>
+                <li><strong>Relatos de texto:</strong> conversas com a IA, mensagens no Mural e notas do Diário pessoal</li>
+                <li><strong>Histórico de humor:</strong> registos de check-in emocional (estados de ânimo selecionados)</li>
+                <li><strong>Interações:</strong> tópicos de conversa, insights salvos, publicações na comunidade</li>
+                <li><strong>Dados de localização:</strong> cidade e região (quando autorizados, para filtros de proximidade)</li>
+            </ul>
+            <p>O processamento é realizado exclusivamente para fins de acolhimento e personalização da experiência. Os dados são transmitidos de forma encriptada (TLS/HTTPS) para modelos de IA (OpenAI GPT), que processam as conversas em tempo real. <strong>A ALICE não utiliza os dados das utilizadoras para treinar modelos de IA.</strong></p>
+            <p>Os dados são armazenados em bases de dados encriptadas com acesso restrito. Não vendemos, partilhamos ou cedemos dados pessoais a terceiros para fins comerciais.</p>
+        </div>
+
+        <hr class="termos-divider">
+
+        <div class="termos-section">
+            <h3>3. Direito ao Esquecimento</h3>
+            <p>Nos termos da LGPD (Art. 18, VI) e do RGPD (Art. 17), a utilizadora tem o direito de solicitar a eliminação completa dos seus dados pessoais a qualquer momento.</p>
+            <p><strong>Como apagar os seus dados:</strong></p>
+            <ul>
+                <li>Aceda à secção <strong>Meu Espaço</strong> no menu inferior da aplicação</li>
+                <li>Na secção <strong>Privacidade</strong>, clique em <strong>«Apagar a Minha Conta e Todos os Dados»</strong></li>
+                <li>Confirme a ação nos dois alertas de segurança</li>
+            </ul>
+            <p>Ao confirmar, serão eliminados permanentemente: todas as conversas com a IA, mensagens do onboarding, notas do diário, publicações no mural, reações, cards de apoio, pedidos de conexão, contactos de emergência, sessões de alerta, preferências de voz, resumos, insights salvos, perfil e o registo da conta. Esta ação é <strong>irreversível</strong>.</p>
+        </div>
+
+        <hr class="termos-divider">
+
+        <div class="termos-section">
+            <h3>4. Direitos da Utilizadora</h3>
+            <p>Nos termos da LGPD e do RGPD, a utilizadora tem direito a:</p>
+            <ul>
+                <li><strong>Acesso</strong> — consultar os dados pessoais armazenados</li>
+                <li><strong>Correção</strong> — retificar dados incorretos ou incompletos</li>
+                <li><strong>Eliminação</strong> — apagar todos os dados (direito ao esquecimento)</li>
+                <li><strong>Portabilidade</strong> — solicitar cópia dos seus dados</li>
+                <li><strong>Revogação do consentimento</strong> — retirar a autorização para processamento de dados sensíveis a qualquer momento</li>
+                <li><strong>Oposição</strong> — opor-se ao tratamento dos dados</li>
+            </ul>
+        </div>
+
+        <hr class="termos-divider">
+
+        <div class="termos-section">
+            <h3>5. Propriedade Intelectual e Direitos Autorais</h3>
+            <p>A metodologia de curadoria, a organização da biblioteca de conhecimento e os algoritmos de resposta da ALICE são propriedade intelectual exclusiva do Projeto ALICE.</p>
+            <p><strong>É estritamente proibida a extração de dados (data mining), engenharia reversa ou o uso de scripts automáticos para copiar a base de conhecimento ou o comportamento da IA para fins comerciais ou de terceiros.</strong></p>
+            <p>Todo o conteúdo original da plataforma — incluindo textos, design visual, código-fonte, prompts de IA e curadoria temática — é protegido por leis de propriedade intelectual e direitos autorais (Lei 9.610/1998 no Brasil, Diretiva 2001/29/CE na UE).</p>
+            <p>O conteúdo gerado pela utilizadora (mensagens, publicações, notas) permanece de sua propriedade, concedendo à ALICE licença limitada para processamento exclusivamente dentro do serviço.</p>
+        </div>
+
+        <hr class="termos-divider">
+
+        <div class="termos-section">
+            <h3>6. Responsabilidades da Utilizadora</h3>
+            <p>A utilizadora compromete-se a:</p>
+            <ul>
+                <li>Não utilizar o serviço para fins ilegais ou que violem direitos de terceiros</li>
+                <li>Respeitar as outras utilizadoras na comunidade (Mural e Círculo de Apoio)</li>
+                <li>Não partilhar conteúdo que promova violência, discriminação ou assédio</li>
+                <li>Manter a confidencialidade das suas credenciais de acesso</li>
+                <li>Não tentar extrair, copiar ou reproduzir a base de conhecimento ou o comportamento da IA</li>
+            </ul>
+        </div>
+
+        <hr class="termos-divider">
+
+        <div class="termos-section">
+            <h3>7. Conteúdo da Comunidade</h3>
+            <p>Publicações no Mural e no Círculo de Apoio são da responsabilidade de quem as publica. A ALICE reserva-se o direito de moderar conteúdo que viole estes termos ou as diretrizes da comunidade, incluindo remoção de conteúdo e suspensão de contas.</p>
+        </div>
+
+        <hr class="termos-divider">
+
+        <div class="termos-section">
+            <h3>8. Retenção de Dados</h3>
+            <p>Os dados pessoais são mantidos enquanto a conta estiver ativa. Após o encerramento voluntário da conta, todos os dados são eliminados permanentemente no ato da confirmação. Dados anonimizados utilizados em resumos coletivos (Voz Coletiva) não permitem identificação individual e podem ser retidos para fins estatísticos.</p>
+        </div>
+
+        <hr class="termos-divider">
+
+        <div class="termos-section">
+            <h3>9. Encerramento de Conta</h3>
+            <p>A utilizadora pode encerrar a sua conta a qualquer momento através da funcionalidade disponível em <strong>Meu Espaço > Privacidade</strong>. A ALICE pode suspender ou encerrar contas que violem repetidamente estes termos.</p>
+        </div>
+
+        <hr class="termos-divider">
+
+        <div class="termos-section">
+            <h3>10. Emergências</h3>
+            <p>A ALICE <strong>não é um serviço de emergência</strong>. Em situações de risco imediato, contacte os serviços competentes:</p>
+            <div class="emergency-box">
+                <p><strong>Portugal / UE:</strong> 112 (Número Europeu de Emergência)</p>
+                <p><strong>Brasil:</strong> 180 (Central de Atendimento à Mulher) · 190 (Polícia Militar) · 192 (SAMU)</p>
+                <p><strong>CVV (Brasil):</strong> 188 (Centro de Valorização da Vida)</p>
+            </div>
+        </div>
+
+        <hr class="termos-divider">
+
+        <div class="termos-section">
+            <h3>11. Alterações aos Termos</h3>
+            <p>A ALICE reserva-se o direito de atualizar estes termos. As utilizadoras serão notificadas sobre alterações significativas. O uso continuado do serviço após as alterações constitui aceitação dos novos termos.</p>
+        </div>
+
+        <div class="termos-footer">
+            © 2024 Projeto ALICE. Todos os direitos reservados.<br>
+            A tecnologia e curadoria deste app são protegidas por leis de propriedade intelectual.
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    var el = document.getElementById('termos-protected');
+    if (el) {
+        el.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+        el.addEventListener('selectstart', function(e) { e.preventDefault(); });
+        el.style.webkitUserSelect = 'none';
+        el.style.userSelect = 'none';
+    }
+})();
+</script>
+</body>
+</html>

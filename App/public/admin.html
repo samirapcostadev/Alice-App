@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alice — Base de Conhecimento</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+               background: #faf9f7; color: #1a1a1a; min-height: 100vh; }
+        .header { background: #8B2635; color: #fff; padding: 20px 32px;
+                  display: flex; align-items: center; gap: 16px; }
+        .header h1 { font-size: 1.25rem; font-weight: 600; }
+        .header p  { font-size: 0.85rem; opacity: 0.8; margin-top: 2px; }
+        .container { max-width: 900px; margin: 40px auto; padding: 0 24px; }
+
+        .card { background: #fff; border-radius: 12px; padding: 28px;
+                border: 1px solid #e8e3de; margin-bottom: 28px; }
+        .card h2 { font-size: 1rem; font-weight: 600; color: #8B2635;
+                   margin-bottom: 20px; }
+
+        label { display: block; font-size: 0.85rem; font-weight: 500;
+                color: #555; margin-bottom: 6px; }
+        input[type=text], input[type=password], textarea {
+            width: 100%; padding: 10px 14px; border: 1px solid #ddd;
+            border-radius: 8px; font-size: 0.9rem; font-family: inherit;
+            outline: none; transition: border 0.2s; }
+        input[type=text]:focus, input[type=password]:focus, textarea:focus {
+            border-color: #8B2635; }
+        textarea { resize: vertical; min-height: 180px; }
+
+        .field { margin-bottom: 18px; }
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+        button { background: #8B2635; color: #fff; border: none;
+                 padding: 10px 22px; border-radius: 8px; font-size: 0.9rem;
+                 font-weight: 500; cursor: pointer; transition: opacity 0.2s; }
+        button:hover   { opacity: 0.88; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-danger { background: #c0392b; }
+
+        .auth-bar { background: #fff3cd; border: 1px solid #ffc107;
+                    border-radius: 8px; padding: 14px 18px; margin-bottom: 24px;
+                    display: flex; align-items: center; gap: 12px; }
+        .auth-bar input { flex: 1; }
+        .auth-bar button { white-space: nowrap; }
+
+        #status { margin-top: 14px; padding: 12px 16px; border-radius: 8px;
+                  font-size: 0.88rem; display: none; }
+        .status-ok  { background: #d4edda; color: #155724; }
+        .status-err { background: #f8d7da; color: #721c24; }
+
+        table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+        th { text-align: left; padding: 10px 12px; border-bottom: 2px solid #e8e3de;
+             color: #666; font-weight: 600; }
+        td { padding: 10px 12px; border-bottom: 1px solid #f0ebe6; vertical-align: top; }
+        tr:last-child td { border-bottom: none; }
+        .badge { background: #f0ebe6; color: #8B2635; border-radius: 20px;
+                 padding: 2px 10px; font-size: 0.78rem; font-weight: 600; }
+        .empty { color: #999; font-style: italic; text-align: center; padding: 24px; }
+
+        .hint { font-size: 0.78rem; color: #999; margin-top: 4px; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div>
+        <h1>Alice — Base de Conhecimento Feminista</h1>
+        <p>Documentos teóricos que fundamentam o pensamento da Alice</p>
+    </div>
+</div>
+
+<div class="container">
+
+    <div class="auth-bar">
+        <label style="margin:0;white-space:nowrap">Chave de acesso:</label>
+        <input type="password" id="admin-key" placeholder="ADMIN_SECRET" />
+        <button onclick="verifyKey()">Entrar</button>
+    </div>
+
+    <div id="main-content" style="display:none">
+
+        <!-- Upload form -->
+        <div class="card">
+            <h2>Adicionar documento</h2>
+            <div class="row">
+                <div class="field">
+                    <label>Título do documento *</label>
+                    <input type="text" id="doc-title" placeholder="ex: Manifesto das Mulheres Negras" />
+                </div>
+                <div class="field">
+                    <label>Nome do arquivo (opcional)</label>
+                    <input type="text" id="doc-filename" placeholder="ex: manifesto.pdf" />
+                </div>
+            </div>
+            <div class="field">
+                <label>Descrição (opcional)</label>
+                <input type="text" id="doc-desc" placeholder="Resumo ou contexto do documento" />
+            </div>
+            <div class="field">
+                <label>Conteúdo do documento *</label>
+                <textarea id="doc-content" placeholder="Cole aqui o texto completo do documento…"></textarea>
+                <p class="hint">O sistema vai fragmentar automaticamente em chunks de ~450 palavras e gerar embeddings via OpenAI.</p>
+            </div>
+            <button id="btn-upload" onclick="uploadDocument()">Processar e adicionar</button>
+            <div id="status"></div>
+        </div>
+
+        <!-- Documents list -->
+        <div class="card">
+            <h2>Documentos na base</h2>
+            <div id="docs-table">
+                <p class="empty">Carregando…</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+let adminKey = '';
+
+function verifyKey() {
+    adminKey = document.getElementById('admin-key').value.trim();
+    if (!adminKey) { alert('Insira a chave de acesso.'); return; }
+    fetchDocuments();
+}
+
+function authHeaders() {
+    return { 'Content-Type': 'application/json',
+             'Authorization': 'Bearer ' + adminKey };
+}
+
+function showStatus(msg, ok) {
+    const el = document.getElementById('status');
+    el.textContent = msg;
+    el.className = ok ? 'status-ok' : 'status-err';
+    el.style.display = 'block';
+    if (ok) setTimeout(() => el.style.display = 'none', 5000);
+}
+
+async function fetchDocuments() {
+    const res = await fetch('/api/admin/knowledge/documents',
+        { headers: { 'Authorization': 'Bearer ' + adminKey } });
+    if (res.status === 401) {
+        alert('Chave incorreta.'); adminKey = ''; return;
+    }
+    document.getElementById('main-content').style.display = 'block';
+    const docs = await res.json();
+    renderDocuments(docs);
+}
+
+function renderDocuments(docs) {
+    const el = document.getElementById('docs-table');
+    if (!docs.length) {
+        el.innerHTML = '<p class="empty">Nenhum documento ainda.</p>'; return;
+    }
+    let html = `<table>
+        <tr>
+            <th>Título</th><th>Arquivo</th><th>Chunks</th><th>Adicionado</th><th></th>
+        </tr>`;
+    docs.forEach(d => {
+        const date = new Date(d.created_at).toLocaleDateString('pt-BR');
+        html += `<tr>
+            <td><strong>${escHtml(d.title)}</strong>${d.description ? '<br><small style="color:#999">' + escHtml(d.description) + '</small>' : ''}</td>
+            <td>${d.filename ? escHtml(d.filename) : '—'}</td>
+            <td><span class="badge">${d.chunk_count}</span></td>
+            <td>${date}</td>
+            <td><button class="btn-danger" onclick="deleteDocument(${d.id}, this)">Remover</button></td>
+        </tr>`;
+    });
+    html += '</table>';
+    el.innerHTML = html;
+}
+
+async function uploadDocument() {
+    const title   = document.getElementById('doc-title').value.trim();
+    const content = document.getElementById('doc-content').value.trim();
+    const filename = document.getElementById('doc-filename').value.trim();
+    const desc    = document.getElementById('doc-desc').value.trim();
+
+    if (!title || !content) {
+        showStatus('Título e conteúdo são obrigatórios.', false); return;
+    }
+
+    const btn = document.getElementById('btn-upload');
+    btn.disabled = true;
+    btn.textContent = 'Processando…';
+    showStatus('Gerando embeddings — pode levar alguns segundos…', true);
+
+    try {
+        const res = await fetch('/api/admin/knowledge/upload', {
+            method: 'POST',
+            headers: authHeaders(),
+            body: JSON.stringify({ title, content, filename, description: desc })
+        });
+        const data = await res.json();
+        if (data.success) {
+            showStatus(`✓ Documento adicionado — ${data.chunks_stored} chunks indexados.`, true);
+            document.getElementById('doc-title').value   = '';
+            document.getElementById('doc-content').value = '';
+            document.getElementById('doc-filename').value = '';
+            document.getElementById('doc-desc').value    = '';
+            fetchDocuments();
+        } else {
+            showStatus('Erro: ' + (data.error || 'desconhecido'), false);
+        }
+    } catch (e) {
+        showStatus('Erro de rede: ' + e.message, false);
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Processar e adicionar';
+    }
+}
+
+async function deleteDocument(id, btn) {
+    if (!confirm('Remover este documento e todos os seus chunks?')) return;
+    btn.disabled = true;
+    const res = await fetch(`/api/admin/knowledge/documents/${id}`,
+        { method: 'DELETE', headers: authHeaders() });
+    const data = await res.json();
+    if (data.success) fetchDocuments();
+    else { alert('Erro ao remover.'); btn.disabled = false; }
+}
+
+function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+</script>
+</body>
+</html>

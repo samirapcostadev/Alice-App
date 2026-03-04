@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#F7F5F2">
+    <title>Alice — Criar Conta</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='img/favicon.svg') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}?v=6">
+</head>
+<body>
+<div class="bg-blobs" aria-hidden="true"></div>
+
+    <svg class="corner-flower tl" viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="#8B5A8E" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+            <g transform="translate(65,65)">
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(0)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(45)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(90)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(135)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(180)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(225)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(270)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(315)"/>
+                <circle r="9"/>
+                <circle r="4"/>
+            </g>
+            <path d="M74,56 C92,46 116,38 142,32 C165,27 188,23 210,21"/>
+            <path d="M116,40 C108,31 110,19 120,17 C124,27 122,39 116,40Z"/>
+            <path d="M122,42 C132,33 130,21 120,17 C118,29 122,41 122,42Z"/>
+            <line x1="116" y1="40" x2="120" y2="17" stroke-width="0.8"/>
+            <path d="M164,30 C156,21 158,9  168,7  C172,17 170,29 164,30Z"/>
+            <path d="M170,32 C180,23 178,11 168,7  C166,19 170,31 170,32Z"/>
+            <line x1="164" y1="30" x2="168" y2="7"  stroke-width="0.8"/>
+            <path d="M207,22 C204,15 206,9 210,7 C214,9 215,15 207,22Z"/>
+            <path d="M71,76 C78,96 84,120 88,144 C92,166 93,188 94,210"/>
+            <path d="M86,120 C78,114 76,102 86,100 C90,108 89,119 86,120Z"/>
+            <path d="M90,122 C98,116 98,104 86,100 C86,112 90,121 90,122Z"/>
+            <line x1="86" y1="120" x2="86" y2="100" stroke-width="0.8"/>
+            <path d="M90,162 C82,156 80,144 90,142 C94,150 93,161 90,162Z"/>
+            <path d="M94,164 C102,158 102,146 90,142 C90,154 94,163 94,164Z"/>
+            <line x1="90" y1="162" x2="90" y2="142" stroke-width="0.8"/>
+            <path d="M94,207 C91,200 93,194 97,192 C101,194 102,200 94,207Z"/>
+        </g>
+    </svg>
+
+    <svg class="corner-flower tr" viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="#8B5A8E" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+            <g transform="translate(65,65)">
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(0)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(45)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(90)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(135)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(180)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(225)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(270)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(315)"/>
+                <circle r="9"/>
+                <circle r="4"/>
+            </g>
+            <path d="M74,56 C92,46 116,38 142,32 C165,27 188,23 210,21"/>
+            <path d="M116,40 C108,31 110,19 120,17 C124,27 122,39 116,40Z"/>
+            <path d="M122,42 C132,33 130,21 120,17 C118,29 122,41 122,42Z"/>
+            <line x1="116" y1="40" x2="120" y2="17" stroke-width="0.8"/>
+            <path d="M164,30 C156,21 158,9  168,7  C172,17 170,29 164,30Z"/>
+            <path d="M170,32 C180,23 178,11 168,7  C166,19 170,31 170,32Z"/>
+            <line x1="164" y1="30" x2="168" y2="7"  stroke-width="0.8"/>
+            <path d="M207,22 C204,15 206,9 210,7 C214,9 215,15 207,22Z"/>
+            <path d="M71,76 C78,96 84,120 88,144 C92,166 93,188 94,210"/>
+            <path d="M86,120 C78,114 76,102 86,100 C90,108 89,119 86,120Z"/>
+            <path d="M90,122 C98,116 98,104 86,100 C86,112 90,121 90,122Z"/>
+            <line x1="86" y1="120" x2="86" y2="100" stroke-width="0.8"/>
+            <path d="M90,162 C82,156 80,144 90,142 C94,150 93,161 90,162Z"/>
+            <path d="M94,164 C102,158 102,146 90,142 C90,154 94,163 94,164Z"/>
+            <line x1="90" y1="162" x2="90" y2="142" stroke-width="0.8"/>
+            <path d="M94,207 C91,200 93,194 97,192 C101,194 102,200 94,207Z"/>
+        </g>
+    </svg>
+
+    <svg class="corner-flower bl" viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="#8B5A8E" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+            <g transform="translate(65,65)">
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(0)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(45)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(90)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(135)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(180)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(225)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(270)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(315)"/>
+                <circle r="9"/>
+                <circle r="4"/>
+            </g>
+            <path d="M74,56 C92,46 116,38 142,32 C165,27 188,23 210,21"/>
+            <path d="M116,40 C108,31 110,19 120,17 C124,27 122,39 116,40Z"/>
+            <path d="M122,42 C132,33 130,21 120,17 C118,29 122,41 122,42Z"/>
+            <line x1="116" y1="40" x2="120" y2="17" stroke-width="0.8"/>
+            <path d="M164,30 C156,21 158,9  168,7  C172,17 170,29 164,30Z"/>
+            <path d="M170,32 C180,23 178,11 168,7  C166,19 170,31 170,32Z"/>
+            <line x1="164" y1="30" x2="168" y2="7"  stroke-width="0.8"/>
+            <path d="M207,22 C204,15 206,9 210,7 C214,9 215,15 207,22Z"/>
+            <path d="M71,76 C78,96 84,120 88,144 C92,166 93,188 94,210"/>
+            <path d="M86,120 C78,114 76,102 86,100 C90,108 89,119 86,120Z"/>
+            <path d="M90,122 C98,116 98,104 86,100 C86,112 90,121 90,122Z"/>
+            <line x1="86" y1="120" x2="86" y2="100" stroke-width="0.8"/>
+            <path d="M90,162 C82,156 80,144 90,142 C94,150 93,161 90,162Z"/>
+            <path d="M94,164 C102,158 102,146 90,142 C90,154 94,163 94,164Z"/>
+            <line x1="90" y1="162" x2="90" y2="142" stroke-width="0.8"/>
+            <path d="M94,207 C91,200 93,194 97,192 C101,194 102,200 94,207Z"/>
+        </g>
+    </svg>
+
+    <svg class="corner-flower br" viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="#8B5A8E" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+            <g transform="translate(65,65)">
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(0)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(45)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(90)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(135)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(180)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(225)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(270)"/>
+                <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(315)"/>
+                <circle r="9"/>
+                <circle r="4"/>
+            </g>
+            <path d="M74,56 C92,46 116,38 142,32 C165,27 188,23 210,21"/>
+            <path d="M116,40 C108,31 110,19 120,17 C124,27 122,39 116,40Z"/>
+            <path d="M122,42 C132,33 130,21 120,17 C118,29 122,41 122,42Z"/>
+            <line x1="116" y1="40" x2="120" y2="17" stroke-width="0.8"/>
+            <path d="M164,30 C156,21 158,9  168,7  C172,17 170,29 164,30Z"/>
+            <path d="M170,32 C180,23 178,11 168,7  C166,19 170,31 170,32Z"/>
+            <line x1="164" y1="30" x2="168" y2="7"  stroke-width="0.8"/>
+            <path d="M207,22 C204,15 206,9 210,7 C214,9 215,15 207,22Z"/>
+            <path d="M71,76 C78,96 84,120 88,144 C92,166 93,188 94,210"/>
+            <path d="M86,120 C78,114 76,102 86,100 C90,108 89,119 86,120Z"/>
+            <path d="M90,122 C98,116 98,104 86,100 C86,112 90,121 90,122Z"/>
+            <line x1="86" y1="120" x2="86" y2="100" stroke-width="0.8"/>
+            <path d="M90,162 C82,156 80,144 90,142 C94,150 93,161 90,162Z"/>
+            <path d="M94,164 C102,158 102,146 90,142 C90,154 94,163 94,164Z"/>
+            <line x1="90" y1="162" x2="90" y2="142" stroke-width="0.8"/>
+            <path d="M94,207 C91,200 93,194 97,192 C101,194 102,200 94,207Z"/>
+        </g>
+    </svg>
+
+    <div class="auth-screen">
+        <div class="auth-card">
+
+            <div class="brand">
+                <img class="brand-logo" src="/static/img/logo.png" alt="Alice">
+                <p class="brand-subtitle">a sua melhor amiga</p>
+                <p class="brand-acronym">Artificial Learning with Intersectional &amp;<br>Critical Epistemology</p>
+            </div>
+
+            <div class="lang-selector">
+                <button class="lang-pill lang-pill--active" data-lang="pt-br">PT-BR</button>
+                <button class="lang-pill" data-lang="pt-pt">PT-PT</button>
+                <button class="lang-pill" data-lang="es">ES</button>
+                <button class="lang-pill" data-lang="en">EN</button>
+                <button class="lang-pill" data-lang="fr">FR</button>
+            </div>
+
+            {% if error %}
+            <div class="field-error-banner">{{ error }}</div>
+            {% endif %}
+
+            <form method="POST" class="login-form">
+                <div class="field">
+                    <input type="text" name="name" placeholder="Nome completo" required>
+                </div>
+                <div class="field">
+                    <input type="text" name="username" placeholder="Usuário" required>
+                </div>
+                <div class="field">
+                    <input type="email" name="email" placeholder="Email" required>
+                </div>
+                <div class="field field-password">
+                    <input type="password" name="password" id="reg-password" placeholder="Senha" required>
+                    <button type="button" class="btn-toggle-pw" onclick="togglePasswordVisibility('reg-password', this)" aria-label="Mostrar senha">
+                        <svg class="eye-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="20" height="20"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                        <svg class="eye-closed hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="20" height="20"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                    </button>
+                </div>
+                <label class="consent-checkbox">
+                    <input type="checkbox" id="consent-check" name="consentimento">
+                    <span class="consent-text">Li e aceito os <a href="/termos" target="_blank" class="consent-link">Termos de Uso</a> e a <a href="/termos" target="_blank" class="consent-link">Política de Privacidade</a>. Declaro estar ciente e dou o meu consentimento explícito para que a ALICE processe os meus dados sensíveis (relatos de texto, histórico de humor e interações) através de modelos de Inteligência Artificial, exclusivamente para fins de acolhimento e personalização da minha experiência ética e segura.</span>
+                </label>
+                <button type="submit" class="btn-enter" id="btn-register" disabled>Criar Conta</button>
+            </form>
+
+            <div class="footer-links">
+                <a href="{{ url_for('login') }}" class="link-register">Já tenho conta</a>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="terms-modal" class="policy-modal-backdrop hidden" onclick="if(event.target===this)this.classList.add('hidden')">
+        <div class="policy-modal">
+            <div class="policy-modal-header">
+                <h3>Termos de Uso</h3>
+                <button onclick="document.getElementById('terms-modal').classList.add('hidden')" class="policy-modal-close">&times;</button>
+            </div>
+            <div class="policy-modal-body">
+                <h4>1. Aceitação dos Termos</h4>
+                <p>Ao criar uma conta na ALICE, você concorda com estes Termos de Uso. A ALICE é uma plataforma de apoio emocional baseada em Inteligência Artificial com perspetiva feminista, decolonial e interseccional.</p>
+                <h4>2. Descrição do Serviço</h4>
+                <p>A ALICE oferece: conversas com IA de apoio emocional, rede comunitária (Mural e Círculo de Apoio), scanner de discurso, diário pessoal e funcionalidades de segurança. O serviço é destinado a mulheres e pessoas que se identificam como tal.</p>
+                <h4>3. Limitações da IA</h4>
+                <p>A ALICE é uma IA de apoio e <strong>não substitui</strong> aconselhamento médico, psicológico, jurídico ou profissional. Em situações de emergência, contacte os serviços competentes: 112 (PT/UE), 180 (BR), 190 (BR).</p>
+                <h4>4. Responsabilidades da Utilizadora</h4>
+                <p>Você compromete-se a: não utilizar o serviço para fins ilegais; respeitar as outras utilizadoras na comunidade; não partilhar conteúdo que promova violência ou discriminação; manter a confidencialidade da sua conta.</p>
+                <h4>5. Conteúdo da Comunidade</h4>
+                <p>Publicações no Mural e no Círculo de Apoio são da responsabilidade de quem as publica. A ALICE reserva-se o direito de moderar conteúdo que viole estes termos ou as diretrizes da comunidade.</p>
+                <h4>6. Propriedade Intelectual</h4>
+                <p>Todo o conteúdo original da plataforma (textos, design, código) é propriedade da ALICE. O conteúdo gerado pela utilizadora permanece seu, concedendo à ALICE licença para processamento dentro do serviço.</p>
+                <h4>7. Encerramento de Conta</h4>
+                <p>Você pode encerrar a sua conta a qualquer momento. A ALICE pode suspender contas que violem estes termos. Em caso de encerramento, os seus dados serão tratados conforme a Política de Privacidade.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="privacy-modal" class="policy-modal-backdrop hidden" onclick="if(event.target===this)this.classList.add('hidden')">
+        <div class="policy-modal">
+            <div class="policy-modal-header">
+                <h3>Política de Privacidade</h3>
+                <button onclick="document.getElementById('privacy-modal').classList.add('hidden')" class="policy-modal-close">&times;</button>
+            </div>
+            <div class="policy-modal-body">
+                <p><em>Em conformidade com a LGPD (Lei 13.709/2018 — Brasil) e o RGPD (Regulamento UE 2016/679).</em></p>
+                <h4>1. Dados Recolhidos</h4>
+                <p><strong>Dados de identificação:</strong> nome, nome de utilizadora, email, cidade/país, foto de perfil (opcional).</p>
+                <p><strong>Dados sensíveis:</strong> relatos de texto nas conversas com a IA, histórico de humor (check-in emocional), publicações na comunidade, notas do diário pessoal e interações com o serviço.</p>
+                <p><strong>Dados técnicos:</strong> geolocalização (quando autorizada), dados de sessão e preferências de uso.</p>
+                <h4>2. Finalidade do Tratamento</h4>
+                <p>Os seus dados são utilizados exclusivamente para: personalizar a experiência de acolhimento com a IA; conectar utilizadoras na rede comunitária por proximidade; gerar resumos emocionais coletivos (anonimizados); melhorar a qualidade do serviço.</p>
+                <h4>3. Base Legal</h4>
+                <p><strong>LGPD (Art. 7º, I e Art. 11, I):</strong> consentimento explícito da titular para dados pessoais e sensíveis.</p>
+                <p><strong>RGPD (Art. 6º, 1a e Art. 9º, 2a):</strong> consentimento explícito para tratamento de dados, incluindo categorias especiais.</p>
+                <h4>4. Processamento por IA</h4>
+                <p>Os seus relatos de texto e interações são processados por modelos de Inteligência Artificial (OpenAI GPT) para gerar respostas de apoio. Este processamento é feito em tempo real e os dados são transmitidos de forma encriptada. A ALICE não utiliza os seus dados para treinar modelos de IA.</p>
+                <h4>5. Armazenamento e Segurança</h4>
+                <p>Os dados são armazenados em bases de dados encriptadas com acesso restrito. Utilizamos encriptação em trânsito (TLS/HTTPS) e controlo de acesso rigoroso. Os dados são retidos enquanto a conta estiver ativa.</p>
+                <h4>6. Partilha de Dados</h4>
+                <p>Os seus dados <strong>não são vendidos</strong> a terceiros. Dados podem ser partilhados com: OpenAI (para processamento de IA, sujeito à política de privacidade deles); serviços de alojamento (infraestrutura técnica). Publicações na comunidade são visíveis para outras utilizadoras conforme as suas configurações de privacidade.</p>
+                <h4>7. Os Seus Direitos</h4>
+                <p>Nos termos da LGPD e do RGPD, você tem direito a: <strong>acesso</strong> aos seus dados; <strong>correção</strong> de dados incorretos; <strong>eliminação</strong> dos seus dados (direito ao esquecimento); <strong>portabilidade</strong> dos dados; <strong>revogação</strong> do consentimento a qualquer momento; <strong>oposição</strong> ao tratamento.</p>
+                <h4>8. Retenção de Dados</h4>
+                <p>Os dados são mantidos enquanto a sua conta estiver ativa. Após o encerramento da conta, os dados pessoais são eliminados no prazo de 30 dias, exceto quando a retenção for exigida por lei.</p>
+                <h4>9. Contacto</h4>
+                <p>Para exercer os seus direitos ou esclarecer dúvidas sobre o tratamento dos seus dados, contacte-nos através do email disponível na plataforma.</p>
+            </div>
+        </div>
+    </div>
+
+<script>
+    if (localStorage.getItem('alice_token')) { window.location.href = '/'; }
+
+    const REG_LABELS = {
+        'pt-br': { name: 'Nome completo', user: 'Usuário', email: 'Email', pass: 'Senha', create: 'Criar Conta', have: 'Já tenho conta', err: 'Erro ao criar conta.', conn: 'Erro de conexão. Tente novamente.' },
+        'pt-pt': { name: 'Nome completo', user: 'Utilizador', email: 'Email', pass: 'Palavra-passe', create: 'Criar Conta', have: 'Já tenho conta', err: 'Erro ao criar conta.', conn: 'Erro de ligação. Tente novamente.' },
+        'es':    { name: 'Nombre completo', user: 'Usuario', email: 'Correo electrónico', pass: 'Contraseña', create: 'Crear Cuenta', have: 'Ya tengo cuenta', err: 'Error al crear cuenta.', conn: 'Error de conexión. Intente de nuevo.' },
+        'en':    { name: 'Full name', user: 'Username', email: 'Email', pass: 'Password', create: 'Create Account', have: 'Already have an account', err: 'Account creation failed.', conn: 'Connection error. Try again.' },
+        'fr':    { name: 'Nom complet', user: 'Identifiant', email: 'Email', pass: 'Mot de passe', create: 'Créer un compte', have: 'J\'ai déjà un compte', err: 'Erreur lors de la création.', conn: 'Erreur réseau. Réessayez.' }
+    };
+
+    let selectedLang = localStorage.getItem('alice_lang') || 'pt-br';
+
+    function setActiveLang(lang) {
+        selectedLang = lang;
+        localStorage.setItem('alice_lang', lang);
+        document.querySelectorAll('.lang-pill').forEach(p => {
+            p.classList.toggle('lang-pill--active', p.dataset.lang === lang);
+        });
+        const labels = REG_LABELS[lang] || REG_LABELS['pt-br'];
+        document.querySelector('input[name="name"]').placeholder = labels.name;
+        document.querySelector('input[name="username"]').placeholder = labels.user;
+        document.querySelector('input[name="email"]').placeholder = labels.email;
+        document.querySelector('input[name="password"]').placeholder = labels.pass;
+        document.querySelector('.btn-enter').textContent = labels.create;
+        document.querySelector('.link-register').textContent = labels.have;
+    }
+
+    document.querySelectorAll('.lang-pill').forEach(pill => {
+        pill.addEventListener('click', () => setActiveLang(pill.dataset.lang));
+    });
+
+    setActiveLang(selectedLang);
+
+    document.querySelector('.login-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const labels = REG_LABELS[selectedLang] || REG_LABELS['pt-br'];
+        const btn = this.querySelector('button[type="submit"]');
+        btn.disabled = true; btn.textContent = '…';
+
+        const name     = this.querySelector('input[name="name"]').value.trim();
+        const username = this.querySelector('input[name="username"]').value.trim();
+        const email    = this.querySelector('input[name="email"]').value.trim();
+        const password = this.querySelector('input[name="password"]').value;
+
+        let banner = document.querySelector('.field-error-banner');
+        if (!banner) {
+            banner = document.createElement('div');
+            banner.className = 'field-error-banner';
+            this.insertAdjacentElement('beforebegin', banner);
+        }
+        banner.style.display = 'none';
+
+        try {
+            const res  = await fetch('/api/auth/register', {
+                method:  'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body:    JSON.stringify({ name, username, email, password, lang: selectedLang, consentimento_dados_sensiveis: document.getElementById('consent-check').checked })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                localStorage.setItem('alice_token', data.token);
+                localStorage.setItem('alice_lang', selectedLang);
+                window.location.href = data.redirect || '/checkout';
+            } else {
+                banner.textContent   = data.error || labels.err;
+                banner.style.display = 'block';
+                btn.disabled = false; btn.textContent = labels.create;
+            }
+        } catch {
+            banner.textContent   = labels.conn;
+            banner.style.display = 'block';
+            btn.disabled = false; btn.textContent = labels.create;
+        }
+    });
+
+    document.getElementById('consent-check').addEventListener('change', function() {
+        document.getElementById('btn-register').disabled = !this.checked;
+    });
+
+    function togglePasswordVisibility(inputId, btn) {
+        const inp = document.getElementById(inputId);
+        if (!inp) return;
+        const isPassword = inp.type === 'password';
+        inp.type = isPassword ? 'text' : 'password';
+        btn.querySelector('.eye-open').classList.toggle('hidden', !isPassword);
+        btn.querySelector('.eye-closed').classList.toggle('hidden', isPassword);
+    }
+</script>
+<p class="app-copyright" style="text-align:center;font-size:10px;color:rgba(100,100,100,0.45);padding:12px 16px 4px;line-height:1.4">© 2024 Projeto ALICE. Todos os direitos reservados. A tecnologia e curadoria deste app são protegidas por leis de propriedade intelectual.</p>
+</body>
+</html>

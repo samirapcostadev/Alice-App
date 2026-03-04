@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#F7F5F2">
+    <title>Alice — Escolha o seu plano</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='img/favicon.svg') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}?v=6">
+    <style>
+        .checkout-page {
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 40px 20px 60px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .checkout-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .checkout-logo {
+            width: 180px;
+            height: auto;
+            margin-bottom: 8px;
+        }
+
+        .checkout-title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: #8B2635;
+            margin: 0 0 6px;
+        }
+
+        .checkout-subtitle {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 14px;
+            color: #666;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .plans-container {
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .plan-card {
+            position: relative;
+            background: rgba(255, 252, 249, 0.45);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.55);
+            border-radius: 20px;
+            padding: 28px 24px;
+            box-shadow: 0 6px 30px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .plan-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .plan-card--popular {
+            border: 2px solid rgba(107, 58, 109, 0.5);
+            background: rgba(255, 252, 249, 0.55);
+            box-shadow: 0 6px 30px rgba(107, 58, 109, 0.15), 0 0 40px rgba(107, 58, 109, 0.08);
+        }
+
+        .plan-card--popular:hover {
+            box-shadow: 0 10px 40px rgba(107, 58, 109, 0.2), 0 0 50px rgba(107, 58, 109, 0.12);
+        }
+
+        .plan-card--vip {
+            border: 2px solid rgba(180, 140, 60, 0.4);
+            background: rgba(255, 252, 249, 0.5);
+            box-shadow: 0 6px 30px rgba(180, 140, 60, 0.12), 0 0 30px rgba(180, 140, 60, 0.06);
+        }
+
+        .plan-card--vip:hover {
+            box-shadow: 0 10px 40px rgba(180, 140, 60, 0.18), 0 0 50px rgba(180, 140, 60, 0.1);
+        }
+
+        .plan-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #6B3A6D, #8B5A8E);
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            padding: 5px 16px;
+            border-radius: 20px;
+            white-space: nowrap;
+            box-shadow: 0 2px 12px rgba(107, 58, 109, 0.35);
+        }
+
+        .plan-badge--vip {
+            background: linear-gradient(135deg, #B48C3C, #D4A843);
+            box-shadow: 0 2px 12px rgba(180, 140, 60, 0.35);
+        }
+
+        .plan-name {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: #2C2C2C;
+            margin: 0 0 2px;
+        }
+
+        .plan-price {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 14px;
+            color: #888;
+            margin: 0 0 16px;
+            font-weight: 500;
+        }
+
+        .plan-price span {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2C2C2C;
+        }
+
+        .plan-features {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 24px;
+        }
+
+        .plan-features li {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 13.5px;
+            color: #444;
+            line-height: 1.5;
+            padding: 6px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .plan-features li::before {
+            content: '';
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            min-width: 18px;
+            margin-top: 1px;
+            border-radius: 50%;
+            background: rgba(107, 58, 109, 0.1);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236B3A6D' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+            background-size: 12px;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .plan-card--vip .plan-features li::before {
+            background-color: rgba(180, 140, 60, 0.1);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23B48C3C' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+        }
+
+        .plan-cta {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 14px;
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 15px;
+            font-weight: 400;
+            letter-spacing: 0.04em;
+            cursor: pointer;
+            transition: opacity 0.18s, transform 0.15s;
+            -webkit-appearance: none;
+        }
+
+        .plan-cta:hover {
+            opacity: 0.9;
+        }
+
+        .plan-cta:active {
+            transform: scale(0.98);
+        }
+
+        .plan-cta--free {
+            background: rgba(255, 252, 249, 0.7);
+            border: 1.5px solid rgba(107, 58, 109, 0.3);
+            color: #6B3A6D;
+        }
+
+        .plan-cta--popular {
+            background: linear-gradient(135deg, #8B2635, #6B3A6D, #3A8D9F);
+            color: #FEFCF9;
+            box-shadow: 0 4px 16px rgba(139, 38, 53, 0.2);
+        }
+
+        .plan-cta--vip {
+            background: linear-gradient(135deg, #B48C3C, #8B6914);
+            color: #FEFCF9;
+            box-shadow: 0 4px 16px rgba(180, 140, 60, 0.25);
+        }
+
+        .checkout-footer {
+            margin-top: 32px;
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+            line-height: 1.6;
+        }
+
+        .checkout-footer a {
+            color: #6B3A6D;
+            text-decoration: none;
+        }
+
+        .checkout-footer a:hover {
+            opacity: 0.7;
+        }
+
+        @media (min-width: 768px) {
+            .plans-container {
+                max-width: 900px;
+                flex-direction: row;
+                align-items: stretch;
+            }
+
+            .plan-card {
+                flex: 1;
+            }
+
+            .plan-card--popular {
+                transform: scale(1.03);
+            }
+
+            .plan-card--popular:hover {
+                transform: scale(1.05);
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="bg-blobs" aria-hidden="true"></div>
+
+<svg class="corner-flower tl" viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g stroke="#8B5A8E" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <g transform="translate(65,65)">
+            <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(0)"/>
+            <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(45)"/>
+            <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(90)"/>
+            <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(135)"/>
+            <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(180)"/>
+            <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(225)"/>
+            <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(270)"/>
+            <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(315)"/>
+            <circle r="9"/>
+            <circle r="4"/>
+        </g>
+        <path d="M74,56 C92,46 116,38 142,32 C165,27 188,23 210,21"/>
+        <path d="M116,40 C108,31 110,19 120,17 C124,27 122,39 116,40Z"/>
+        <path d="M122,42 C132,33 130,21 120,17 C118,29 122,41 122,42Z"/>
+        <line x1="116" y1="40" x2="120" y2="17" stroke-width="0.8"/>
+        <path d="M164,30 C156,21 158,9  168,7  C172,17 170,29 164,30Z"/>
+        <path d="M170,32 C180,23 178,11 168,7  C166,19 170,31 170,32Z"/>
+        <line x1="164" y1="30" x2="168" y2="7"  stroke-width="0.8"/>
+        <path d="M207,22 C204,15 206,9 210,7 C214,9 215,15 207,22Z"/>
+        <path d="M71,76 C78,96 84,120 88,144 C92,166 93,188 94,210"/>
+        <path d="M86,120 C78,114 76,102 86,100 C90,108 89,119 86,120Z"/>
+        <path d="M90,122 C98,116 98,104 86,100 C86,112 90,121 90,122Z"/>
+        <line x1="86" y1="120" x2="86" y2="100" stroke-width="0.8"/>
+        <path d="M90,162 C82,156 80,144 90,142 C94,150 93,161 90,162Z"/>
+        <path d="M94,164 C102,158 102,146 90,142 C90,154 94,163 94,164Z"/>
+        <line x1="90" y1="162" x2="90" y2="142" stroke-width="0.8"/>
+        <path d="M94,207 C91,200 93,194 97,192 C101,194 102,200 94,207Z"/>
+    </g>
+</svg>
+
+<svg class="corner-flower tr" viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g stroke="#8B5A8E" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <g transform="translate(65,65)">
+            <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(0)"/>
+            <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(45)"/>
+            <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(90)"/>
+            <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(135)"/>
+            <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(180)"/>
+            <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(225)"/>
+            <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(270)"/>
+            <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(315)"/>
+            <circle r="9"/>
+            <circle r="4"/>
+        </g>
+        <path d="M74,56 C92,46 116,38 142,32 C165,27 188,23 210,21"/>
+        <path d="M116,40 C108,31 110,19 120,17 C124,27 122,39 116,40Z"/>
+        <path d="M122,42 C132,33 130,21 120,17 C118,29 122,41 122,42Z"/>
+        <line x1="116" y1="40" x2="120" y2="17" stroke-width="0.8"/>
+        <path d="M164,30 C156,21 158,9  168,7  C172,17 170,29 164,30Z"/>
+        <path d="M170,32 C180,23 178,11 168,7  C166,19 170,31 170,32Z"/>
+        <line x1="164" y1="30" x2="168" y2="7"  stroke-width="0.8"/>
+        <path d="M207,22 C204,15 206,9 210,7 C214,9 215,15 207,22Z"/>
+        <path d="M71,76 C78,96 84,120 88,144 C92,166 93,188 94,210"/>
+        <path d="M86,120 C78,114 76,102 86,100 C90,108 89,119 86,120Z"/>
+        <path d="M90,122 C98,116 98,104 86,100 C86,112 90,121 90,122Z"/>
+        <line x1="86" y1="120" x2="86" y2="100" stroke-width="0.8"/>
+        <path d="M90,162 C82,156 80,144 90,142 C94,150 93,161 90,162Z"/>
+        <path d="M94,164 C102,158 102,146 90,142 C90,154 94,163 94,164Z"/>
+        <line x1="90" y1="162" x2="90" y2="142" stroke-width="0.8"/>
+        <path d="M94,207 C91,200 93,194 97,192 C101,194 102,200 94,207Z"/>
+    </g>
+</svg>
+
+<svg class="corner-flower bl" viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g stroke="#8B5A8E" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <g transform="translate(65,65)">
+            <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(0)"/>
+            <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(45)"/>
+            <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(90)"/>
+            <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(135)"/>
+            <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(180)"/>
+            <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(225)"/>
+            <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(270)"/>
+            <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(315)"/>
+            <circle r="9"/>
+            <circle r="4"/>
+        </g>
+        <path d="M74,56 C92,46 116,38 142,32 C165,27 188,23 210,21"/>
+        <path d="M116,40 C108,31 110,19 120,17 C124,27 122,39 116,40Z"/>
+        <path d="M122,42 C132,33 130,21 120,17 C118,29 122,41 122,42Z"/>
+        <line x1="116" y1="40" x2="120" y2="17" stroke-width="0.8"/>
+        <path d="M164,30 C156,21 158,9  168,7  C172,17 170,29 164,30Z"/>
+        <path d="M170,32 C180,23 178,11 168,7  C166,19 170,31 170,32Z"/>
+        <line x1="164" y1="30" x2="168" y2="7"  stroke-width="0.8"/>
+        <path d="M207,22 C204,15 206,9 210,7 C214,9 215,15 207,22Z"/>
+        <path d="M71,76 C78,96 84,120 88,144 C92,166 93,188 94,210"/>
+        <path d="M86,120 C78,114 76,102 86,100 C90,108 89,119 86,120Z"/>
+        <path d="M90,122 C98,116 98,104 86,100 C86,112 90,121 90,122Z"/>
+        <line x1="86" y1="120" x2="86" y2="100" stroke-width="0.8"/>
+        <path d="M90,162 C82,156 80,144 90,142 C94,150 93,161 90,162Z"/>
+        <path d="M94,164 C102,158 102,146 90,142 C90,154 94,163 94,164Z"/>
+        <line x1="90" y1="162" x2="90" y2="142" stroke-width="0.8"/>
+        <path d="M94,207 C91,200 93,194 97,192 C101,194 102,200 94,207Z"/>
+    </g>
+</svg>
+
+<svg class="corner-flower br" viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g stroke="#8B5A8E" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <g transform="translate(65,65)">
+            <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(0)"/>
+            <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(45)"/>
+            <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(90)"/>
+            <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(135)"/>
+            <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(180)"/>
+            <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(225)"/>
+            <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(270)"/>
+            <path d="M0,0 C-7,-2 -8,-16 0,-22 C8,-16 7,-2 0,0Z" transform="rotate(315)"/>
+            <circle r="9"/>
+            <circle r="4"/>
+        </g>
+        <path d="M74,56 C92,46 116,38 142,32 C165,27 188,23 210,21"/>
+        <path d="M116,40 C108,31 110,19 120,17 C124,27 122,39 116,40Z"/>
+        <path d="M122,42 C132,33 130,21 120,17 C118,29 122,41 122,42Z"/>
+        <line x1="116" y1="40" x2="120" y2="17" stroke-width="0.8"/>
+        <path d="M164,30 C156,21 158,9  168,7  C172,17 170,29 164,30Z"/>
+        <path d="M170,32 C180,23 178,11 168,7  C166,19 170,31 170,32Z"/>
+        <line x1="164" y1="30" x2="168" y2="7"  stroke-width="0.8"/>
+        <path d="M207,22 C204,15 206,9 210,7 C214,9 215,15 207,22Z"/>
+        <path d="M71,76 C78,96 84,120 88,144 C92,166 93,188 94,210"/>
+        <path d="M86,120 C78,114 76,102 86,100 C90,108 89,119 86,120Z"/>
+        <path d="M90,122 C98,116 98,104 86,100 C86,112 90,121 90,122Z"/>
+        <line x1="86" y1="120" x2="86" y2="100" stroke-width="0.8"/>
+        <path d="M90,162 C82,156 80,144 90,142 C94,150 93,161 90,162Z"/>
+        <path d="M94,164 C102,158 102,146 90,142 C90,154 94,163 94,164Z"/>
+        <line x1="90" y1="162" x2="90" y2="142" stroke-width="0.8"/>
+        <path d="M94,207 C91,200 93,194 97,192 C101,194 102,200 94,207Z"/>
+    </g>
+</svg>
+
+<div class="checkout-page">
+    <div class="checkout-header">
+        <img class="checkout-logo" src="/static/img/logo.png" alt="Alice">
+        <h1 class="checkout-title">Escolha o seu plano</h1>
+        <p class="checkout-subtitle">Comece gratuitamente ou desbloqueie tudo com um plano premium</p>
+    </div>
+
+    <div class="plans-container">
+
+        <div class="plan-card">
+            <h2 class="plan-name">Essencial</h2>
+            <p class="plan-price"><span>Grátis</span></p>
+            <ul class="plan-features">
+                <li>3 mensagens por dia com a Alice</li>
+                <li>Acesso ao Home</li>
+                <li>Acesso à Rede</li>
+                <li>Acesso ao Meu Espaço</li>
+            </ul>
+            <button class="plan-cta plan-cta--free" onclick="selectFreePlan()">Começar grátis</button>
+        </div>
+
+        <div class="plan-card plan-card--popular">
+            <div class="plan-badge">Mais Popular</div>
+            <h2 class="plan-name">Irmandade</h2>
+            <p class="plan-price"><span>€9,90</span>/mês</p>
+            <ul class="plan-features">
+                <li>Chat ilimitado com a Alice</li>
+                <li>Acesso ao Diretório</li>
+                <li>Acesso ao Diário</li>
+                <li>Mini Cursos de Empoderamento</li>
+                <li>Tudo do plano Essencial</li>
+            </ul>
+            <button class="plan-cta plan-cta--popular" onclick="selectPremiumPlan()">Assinar Irmandade</button>
+        </div>
+
+        <div class="plan-card plan-card--vip">
+            <div class="plan-badge plan-badge--vip">Exclusivo</div>
+            <h2 class="plan-name">VIP</h2>
+            <p class="plan-price"><span>€29,90</span>/mês</p>
+            <ul class="plan-features">
+                <li>Tudo do plano Irmandade</li>
+                <li>Consultoria com Advogada ou Mentora de Carreira da nossa rede</li>
+                <li>1 sessão por mês incluída</li>
+            </ul>
+            <button class="plan-cta plan-cta--vip" onclick="selectVipPlan()">Assinar VIP</button>
+        </div>
+
+    </div>
+
+    <div class="checkout-footer">
+        <p>Pode mudar de plano a qualquer momento em Meu Espaço.</p>
+    </div>
+</div>
+
+<script>
+    const PRICE_IDS = {
+        irmandade: 'price_1T6WOSGSH0zUoeNtbdwbjOj7',
+        vip: 'price_1T6WOTGSH0zUoeNttQwezQmz'
+    };
+
+    function getToken() {
+        return localStorage.getItem('alice_token');
+    }
+
+    (function handleReturnFromStripe() {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('cancelled') === 'true') {
+            history.replaceState(null, '', '/checkout');
+        }
+    })();
+
+    async function selectFreePlan() {
+        const token = getToken();
+        if (!token) { window.location.href = '/login'; return; }
+        try {
+            const res = await fetch('/api/subscription/select', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                body: JSON.stringify({ tier: 'essencial' })
+            });
+            if (res.ok) window.location.href = '/';
+        } catch (e) { window.location.href = '/'; }
+    }
+
+    async function startStripeCheckout(tier) {
+        const token = getToken();
+        if (!token) { window.location.href = '/login'; return; }
+        const btn = event.target;
+        btn.disabled = true;
+        btn.textContent = 'Redirecionando...';
+        try {
+            const res = await fetch('/api/stripe/create-checkout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                body: JSON.stringify({ tier, price_id: PRICE_IDS[tier] })
+            });
+            const data = await res.json();
+            if (data.url) {
+                window.location.href = data.url;
+            } else {
+                alert(data.error || 'Erro ao iniciar pagamento.');
+                btn.disabled = false;
+                btn.textContent = tier === 'vip' ? 'Assinar VIP' : 'Assinar Irmandade';
+            }
+        } catch (e) {
+            alert('Erro de conexão. Tente novamente.');
+            btn.disabled = false;
+            btn.textContent = tier === 'vip' ? 'Assinar VIP' : 'Assinar Irmandade';
+        }
+    }
+
+    function selectPremiumPlan() { startStripeCheckout('irmandade'); }
+    function selectVipPlan() { startStripeCheckout('vip'); }
+</script>
+<p class="app-copyright" style="text-align:center;font-size:10px;color:rgba(100,100,100,0.45);padding:12px 16px 4px;line-height:1.4">© 2024 Projeto ALICE. Todos os direitos reservados. A tecnologia e curadoria deste app são protegidas por leis de propriedade intelectual.</p>
+</body>
+</html>
